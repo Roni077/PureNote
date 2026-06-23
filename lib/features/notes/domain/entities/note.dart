@@ -9,6 +9,7 @@ class Note {
   final bool isTrashed;
   final int colorIndex;
   final String? folderId;
+  final List<String> tagIds;
 
   Note({
     required this.id,
@@ -21,6 +22,7 @@ class Note {
     this.isTrashed = false,
     this.colorIndex = 0,
     this.folderId,
+    this.tagIds = const [],
   });
 
   Note copyWith({
@@ -34,6 +36,7 @@ class Note {
     bool? isTrashed,
     int? colorIndex,
     String? folderId,
+    List<String>? tagIds,
   }) {
     return Note(
       id: id ?? this.id,
@@ -46,6 +49,7 @@ class Note {
       isTrashed: isTrashed ?? this.isTrashed,
       colorIndex: colorIndex ?? this.colorIndex,
       folderId: folderId ?? this.folderId,
+      tagIds: tagIds ?? this.tagIds,
     );
   }
 }

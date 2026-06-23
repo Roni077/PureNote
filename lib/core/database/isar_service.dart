@@ -2,6 +2,7 @@ import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../features/notes/data/models/note_model.dart';
 import '../../features/folders/data/models/folder_model.dart';
+import '../../features/tags/data/models/tag_model.dart';
 
 
 class IsarService {
@@ -18,6 +19,7 @@ class IsarService {
         [
           NoteModelSchema,
           FolderModelSchema,
+          TagModelSchema,
         ],
         directory: dir.path,
         inspector: true,

@@ -20,6 +20,7 @@ class NoteModel {
   bool isTrashed = false;
   int colorIndex = 0;
   String? folderId;
+  List<String> tagIds = [];
 
   Note toDomain() {
     return Note(
@@ -33,6 +34,7 @@ class NoteModel {
       isTrashed: isTrashed,
       colorIndex: colorIndex,
       folderId: folderId,
+      tagIds: tagIds,
     );
   }
 
@@ -47,6 +49,7 @@ class NoteModel {
       ..isArchived = note.isArchived
       ..isTrashed = note.isTrashed
       ..colorIndex = note.colorIndex
-      ..folderId = note.folderId;
+      ..folderId = note.folderId
+      ..tagIds = note.tagIds;
   }
 }
