@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../features/notes/data/models/note_model.dart';
 
 
 class IsarService {
@@ -12,10 +13,9 @@ class IsarService {
   Future<Isar> openDB() async {
     if (Isar.instanceNames.isEmpty) {
       final dir = await getApplicationDocumentsDirectory();
-      // We will add schemas here as we create them in later phases
       return await Isar.open(
         [
-          // NoteSchema,
+          NoteModelSchema,
           // FolderSchema,
         ],
         directory: dir.path,
