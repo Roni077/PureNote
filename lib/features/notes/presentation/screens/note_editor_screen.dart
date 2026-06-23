@@ -145,12 +145,12 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
           ),
           IconButton(
             icon: Icon(_currentNote!.isArchived ? Icons.archive : Icons.archive_outlined),
-            onPressed: () async {
-              await ref.read(noteNotifierProvider.notifier).toggleArchive(_currentNote!);
+            onPressed: () {
+              ref.read(noteNotifierProvider.notifier).toggleArchive(_currentNote!);
               setState(() {
                 _currentNote = _currentNote!.copyWith(isArchived: !_currentNote!.isArchived);
               });
-              if (mounted) context.pop();
+              context.pop();
             },
           ),
           IconButton(
