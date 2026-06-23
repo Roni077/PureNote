@@ -7,7 +7,7 @@ import '../../../../core/utils/debouncer.dart';
 import '../../domain/entities/note.dart';
 import '../providers/note_provider.dart';
 import '../../../../app/app_providers.dart';
-import '../../settings/presentation/providers/settings_provider.dart';
+import '../../../settings/presentation/providers/settings_provider.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 class NoteEditorScreen extends ConsumerStatefulWidget {
