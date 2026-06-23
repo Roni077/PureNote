@@ -1,0 +1,62 @@
+name: iOS Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
+  build-debug:
+    name: Build Debug iOS
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter build ios --debug --no-codesign
+      - name: Zip Runner.app
+        run: |
+          cd build/ios/iphoneos
+          zip -r purenote_ios_universal_debug.zip Runner.app
+      - name: Upload iOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: purenote-ios-universal-debug
+          path: build/ios/iphoneos/purenote_ios_universal_debug.zip
+
+  build-release:
+    name: Build Release iOS
+    needs: build-debug
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter build ios --release --no-codesign
+      - name: Zip Runner.app
+        run: |
+          cd build/ios/iphoneos
+          zip -r purenote_ios_universal_release.zip Runner.app
+      - name: Upload iOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: purenote-ios-universal-release
+          path: build/ios/iphoneos/purenote_ios_universal_release.zip

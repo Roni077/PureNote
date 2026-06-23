@@ -1,0 +1,58 @@
+name: Windows Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
+  build-debug:
+    name: Build Debug Windows
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter build windows --debug
+      - name: Zip build contents
+        run: Compress-Archive -Path build\windows\x64\runner\Debug\* -DestinationPath purenote_windows_x64_debug.zip
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: purenote-windows-x64-debug
+          path: purenote_windows_x64_debug.zip
+
+  build-release:
+    name: Build Release Windows
+    needs: build-debug
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter build windows --release
+      - name: Zip build contents
+        run: Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath purenote_windows_x64_release.zip
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: purenote-windows-x64-release
+          path: purenote_windows_x64_release.zip
