@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import '../models/settings_model.dart';
+import '../../domain/entities/settings.dart';
 import '../../../../core/database/isar_service.dart';
 
 class SettingsLocalDataSource {
