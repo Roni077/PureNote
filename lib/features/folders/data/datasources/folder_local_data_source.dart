@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import '../models/folder_model.dart';
+import '../../../../features/notes/data/models/note_model.dart';
 import '../../../../core/database/isar_service.dart';
 
 class FolderLocalDataSource {
