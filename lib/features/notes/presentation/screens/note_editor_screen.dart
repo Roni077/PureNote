@@ -7,6 +7,8 @@ import '../../../../core/utils/debouncer.dart';
 import '../../domain/entities/note.dart';
 import '../providers/note_provider.dart';
 import '../../../../app/app_providers.dart';
+import '../../settings/presentation/providers/settings_provider.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 class NoteEditorScreen extends ConsumerStatefulWidget {
   final String? noteId;
@@ -25,6 +27,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
 
   Note? _currentNote;
   bool _isInitialized = false;
+  bool _isPreviewMode = false;
 
   @override
   void initState() {
@@ -80,9 +83,12 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   }
 
   void _onTextChanged() {
-    _debouncer.run(() {
-      _saveNote();
-    });
+    final isAutoSaveEnabled = ref.read(settingsNotifierProvider).settings.isAutoSaveEnabled;
+    if (isAutoSaveEnabled) {
+      _debouncer.run(() {
+        _saveNote();
+      });
+    }
   }
 
   Future<void> _saveNote() async {
@@ -193,6 +199,8 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    final settings = ref.watch(settingsNotifierProvider).settings;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -200,6 +208,16 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
           onPressed: () => context.pop(),
         ),
         actions: [
+          if (!settings.isAutoSaveEnabled)
+            IconButton(
+              icon: const Icon(Icons.save),
+              onPressed: () {
+                _saveNote();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Note saved'), duration: Duration(seconds: 1)),
+                );
+              },
+            ),
           IconButton(
             icon: Icon(_currentNote!.isPinned ? Icons.push_pin : Icons.push_pin_outlined),
             onPressed: () async {
@@ -229,68 +247,83 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
               // Show color picker dialog (to be implemented)
             },
           ),
+          if (settings.isMarkdownEnabled)
+            IconButton(
+              icon: Icon(_isPreviewMode ? Icons.edit : Icons.visibility),
+              onPressed: () {
+                setState(() {
+                  _isPreviewMode = !_isPreviewMode;
+                });
+              },
+            ),
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Formatting Toolbar
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+        child: _isPreviewMode && settings.isMarkdownEnabled
+            ? Markdown(
+                data: '# ${_titleController.text}\n\n${_contentController.text}',
+                padding: const EdgeInsets.all(24.0),
+              )
+            : Column(
                 children: [
-                  IconButton(icon: const Icon(Icons.format_bold), onPressed: () => _insertMarkdown('**', '**')),
-                  IconButton(icon: const Icon(Icons.format_italic), onPressed: () => _insertMarkdown('*', '*')),
-                  IconButton(icon: const Icon(Icons.format_list_bulleted), onPressed: () => _insertMarkdown('- ', '')),
-                  IconButton(icon: const Icon(Icons.format_list_numbered), onPressed: () => _insertMarkdown('1. ', '')),
-                  IconButton(icon: const Icon(Icons.check_box_outlined), onPressed: () => _insertMarkdown('- [ ] ', '')),
+                  if (settings.isMarkdownEnabled)
+                    // Formatting Toolbar
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          IconButton(icon: const Icon(Icons.format_bold), onPressed: () => _insertMarkdown('**', '**')),
+                          IconButton(icon: const Icon(Icons.format_italic), onPressed: () => _insertMarkdown('*', '*')),
+                          IconButton(icon: const Icon(Icons.format_list_bulleted), onPressed: () => _insertMarkdown('- ', '')),
+                          IconButton(icon: const Icon(Icons.format_list_numbered), onPressed: () => _insertMarkdown('1. ', '')),
+                          IconButton(icon: const Icon(Icons.check_box_outlined), onPressed: () => _insertMarkdown('- [ ] ', '')),
+                        ],
+                      ),
+                    ),
+                  if (settings.isMarkdownEnabled) const Divider(height: 1),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: _titleController,
+                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                            decoration: const InputDecoration(
+                              hintText: 'Title',
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              filled: false,
+                              contentPadding: EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            textCapitalization: TextCapitalization.sentences,
+                          ),
+                          Expanded(
+                            child: TextField(
+                              controller: _contentController,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                              decoration: const InputDecoration(
+                                hintText: 'Start writing...',
+                                border: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                filled: false,
+                              ),
+                              maxLines: null,
+                              expands: true,
+                              keyboardType: TextInputType.multiline,
+                              textCapitalization: TextCapitalization.sentences,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
-            ),
-            const Divider(height: 1),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _titleController,
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                      decoration: const InputDecoration(
-                        hintText: 'Title',
-                        border: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        filled: false,
-                        contentPadding: EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      textCapitalization: TextCapitalization.sentences,
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: _contentController,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        decoration: const InputDecoration(
-                          hintText: 'Start writing...',
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          filled: false,
-                        ),
-                        maxLines: null,
-                        expands: true,
-                        keyboardType: TextInputType.multiline,
-                        textCapitalization: TextCapitalization.sentences,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
