@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/utils/debouncer.dart';
 import '../../domain/entities/note.dart';
 import '../providers/note_provider.dart';
+import '../../../../app/app_providers.dart';
 
 class NoteEditorScreen extends ConsumerStatefulWidget {
   final String? noteId;
@@ -123,6 +124,69 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     );
   }
 
+  void _showTagSelector(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Consumer(
+          builder: (context, ref, child) {
+            final tagState = ref.watch(tagNotifierProvider);
+            final allTags = tagState.tags;
+            final currentTagIds = _currentNote?.tagIds ?? [];
+
+            return SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text('Select Tags', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                  ),
+                  const Divider(height: 1),
+                  if (allTags.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: Text('No tags created yet.'),
+                    )
+                  else
+                    Flexible(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: allTags.length,
+                        itemBuilder: (context, index) {
+                          final tag = allTags[index];
+                          final isSelected = currentTagIds.contains(tag.id);
+                          return CheckboxListTile(
+                            title: Text(tag.name),
+                            value: isSelected,
+                            onChanged: (bool? value) {
+                              if (value == true) {
+                                setState(() {
+                                  _currentNote = _currentNote!.copyWith(tagIds: [...currentTagIds, tag.id]);
+                                });
+                                _saveNote();
+                              } else {
+                                setState(() {
+                                  _currentNote = _currentNote!.copyWith(
+                                    tagIds: currentTagIds.where((id) => id != tag.id).toList(),
+                                  );
+                                });
+                                _saveNote();
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_currentNote == null) {
@@ -154,6 +218,10 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
               });
               context.pop();
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.label_outline),
+            onPressed: () => _showTagSelector(context),
           ),
           IconButton(
             icon: const Icon(Icons.color_lens_outlined),

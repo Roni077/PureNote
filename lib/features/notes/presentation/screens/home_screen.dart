@@ -56,16 +56,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(noteNotifierProvider);
     final folderState = ref.watch(folderNotifierProvider);
+    final tagState = ref.watch(tagNotifierProvider);
     
-    final displayedNotes = folderState.selectedFolderId == null
-        ? state.notes
-        : state.notes.where((n) => n.folderId == folderState.selectedFolderId).toList();
+    final displayedNotes = state.notes.where((n) {
+      final matchesFolder = folderState.selectedFolderId == null || n.folderId == folderState.selectedFolderId;
+      final matchesTag = tagState.selectedTagId == null || n.tagIds.contains(tagState.selectedTagId);
+      return matchesFolder && matchesTag;
+    }).toList();
 
     String title = 'All Notes';
     if (folderState.selectedFolderId != null) {
       final matches = folderState.folders.where((f) => f.id == folderState.selectedFolderId);
       if (matches.isNotEmpty) {
         title = matches.first.name;
+      }
+    }
+    if (tagState.selectedTagId != null) {
+      final matches = tagState.tags.where((t) => t.id == tagState.selectedTagId);
+      if (matches.isNotEmpty) {
+        if (title == 'All Notes') {
+          title = matches.first.name;
+        } else {
+          title += ' - ${matches.first.name}';
+        }
       }
     }
 
