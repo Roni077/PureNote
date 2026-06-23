@@ -3,7 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../features/notes/data/models/note_model.dart';
 import '../../features/folders/data/models/folder_model.dart';
 import '../../features/tags/data/models/tag_model.dart';
-
+import '../../features/settings/data/models/settings_model.dart';
 
 class IsarService {
   late Future<Isar> db;
@@ -20,6 +20,7 @@ class IsarService {
           NoteModelSchema,
           FolderModelSchema,
           TagModelSchema,
+          SettingsModelSchema,
         ],
         directory: dir.path,
         inspector: true,
