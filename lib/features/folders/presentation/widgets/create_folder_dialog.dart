@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/folder.dart';
-import '../providers/folder_provider.dart';
 import '../../../../app/app_providers.dart';
 
 class CreateFolderDialog extends ConsumerStatefulWidget {

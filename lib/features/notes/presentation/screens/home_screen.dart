@@ -8,7 +8,7 @@ import '../providers/note_provider.dart';
 import '../widgets/note_card.dart';
 import '../../domain/entities/note.dart';
 
-import '../../folders/presentation/widgets/folder_list_widget.dart';
+import '../../../folders/presentation/widgets/folder_list_widget.dart';
 import '../../../../app/app_providers.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -63,8 +63,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     String title = 'All Notes';
     if (folderState.selectedFolderId != null) {
-      final folder = folderState.folders.firstWhere((f) => f.id == folderState.selectedFolderId);
-      title = folder.name;
+      final matches = folderState.folders.where((f) => f.id == folderState.selectedFolderId);
+      if (matches.isNotEmpty) {
+        title = matches.first.name;
+      }
     }
 
     return AdaptiveScaffold(

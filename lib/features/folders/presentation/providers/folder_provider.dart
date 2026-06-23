@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../app/app_providers.dart';
-import '../domain/entities/folder.dart';
-import '../domain/usecases/folder_usecases.dart';
+import '../../domain/entities/folder.dart';
+import '../../domain/usecases/folder_usecases.dart';
 
 // State class for FolderNotifier
 class FolderState {
