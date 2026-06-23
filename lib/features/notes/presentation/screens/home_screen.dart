@@ -45,16 +45,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _createNewNote() async {
-    // In Phase 4 we will navigate to NoteEditorScreen
-    // For now, let's create a dummy note to test the UI
-    final newNote = Note(
-      id: const Uuid().v4(),
-      title: 'New Note ${DateTime.now().second}',
-      content: 'This is a test note.',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    await ref.read(noteNotifierProvider.notifier).addNote(newNote);
+    context.pushNamed('editor');
   }
 
   @override
@@ -164,7 +155,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               if (_isSelectionMode) {
                 _toggleSelection(note.id);
               } else {
-                // Navigate to NoteEditorScreen
+                context.pushNamed('editor', queryParameters: {'id': note.id});
               }
             },
             onLongPress: () {
