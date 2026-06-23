@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/app_providers.dart';
 import 'create_folder_dialog.dart';
 import '../../../tags/presentation/widgets/create_tag_dialog.dart';
+import 'package:go_router/go_router.dart';
 
 class FolderListWidget extends ConsumerWidget {
   const FolderListWidget({super.key});
@@ -182,6 +183,15 @@ class FolderListWidget extends ConsumerWidget {
                         },
                       );
                     }),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.settings),
+                    title: const Text('Settings'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.pushNamed('settings');
+                    },
+                  ),
                 ],
               ),
             ),
