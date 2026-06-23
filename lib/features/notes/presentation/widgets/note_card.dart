@@ -72,7 +72,7 @@ class NoteCard extends StatelessWidget {
               Text(
                 DateFormat.yMMMd().format(note.updatedAt),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6),
+                      color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(153),
                     ),
               ),
             ],

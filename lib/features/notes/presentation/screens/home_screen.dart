@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../shared/widgets/adaptive_scaffold.dart';
+import '../../../../shared/widgets/adaptive_scaffold.dart';
 import '../providers/note_provider.dart';
 import '../widgets/note_card.dart';
 import '../../domain/entities/note.dart';
@@ -129,12 +129,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.notes, size: 64, color: Theme.of(context).colorScheme.primary.withOpacity(0.5)),
+            Icon(Icons.notes, size: 64, color: Theme.of(context).colorScheme.primary.withAlpha(128)),
             const SizedBox(height: 16),
             Text(
               'No notes yet',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.primary.withAlpha(128),
                   ),
             ),
           ],
