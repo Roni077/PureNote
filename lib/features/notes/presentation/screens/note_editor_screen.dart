@@ -9,8 +9,9 @@ import '../providers/note_provider.dart';
 
 class NoteEditorScreen extends ConsumerStatefulWidget {
   final String? noteId;
+  final String? folderId;
 
-  const NoteEditorScreen({super.key, this.noteId});
+  const NoteEditorScreen({super.key, this.noteId, this.folderId});
 
   @override
   ConsumerState<NoteEditorScreen> createState() => _NoteEditorScreenState();
@@ -67,6 +68,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
         content: '',
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
+        folderId: widget.folderId,
       );
       // Wait for build cycle to complete before modifying provider
       WidgetsBinding.instance.addPostFrameCallback((_) {

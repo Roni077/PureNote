@@ -17,7 +17,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'editor',
         builder: (context, state) {
           final noteId = state.uri.queryParameters['id'];
-          return NoteEditorScreen(noteId: noteId);
+          final folderId = state.uri.queryParameters['folderId'];
+          return NoteEditorScreen(noteId: noteId, folderId: folderId);
         },
       ),
     ],

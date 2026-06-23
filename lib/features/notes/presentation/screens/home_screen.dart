@@ -8,6 +8,9 @@ import '../providers/note_provider.dart';
 import '../widgets/note_card.dart';
 import '../../domain/entities/note.dart';
 
+import '../../folders/presentation/widgets/folder_list_widget.dart';
+import '../../../../app/app_providers.dart';
+
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -45,15 +48,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _createNewNote() async {
-    context.pushNamed('editor');
+    final selectedFolderId = ref.read(folderNotifierProvider).selectedFolderId;
+    context.pushNamed('editor', queryParameters: {'folderId': selectedFolderId});
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(noteNotifierProvider);
+    final folderState = ref.watch(folderNotifierProvider);
+    
+    final displayedNotes = folderState.selectedFolderId == null
+        ? state.notes
+        : state.notes.where((n) => n.folderId == folderState.selectedFolderId).toList();
+
+    String title = 'All Notes';
+    if (folderState.selectedFolderId != null) {
+      final folder = folderState.folders.firstWhere((f) => f.id == folderState.selectedFolderId);
+      title = folder.name;
+    }
 
     return AdaptiveScaffold(
-      title: 'PureNote',
+      title: title,
+      drawer: const FolderListWidget(),
       floatingActionButton: _isSelectionMode
           ? null
           : FloatingActionButton(
@@ -62,21 +78,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
       body: CustomScrollView(
         slivers: [
-          _buildAppBar(context, state),
+          _buildAppBar(context, state, title),
           if (state.isLoading)
             const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),
             )
-          else if (state.notes.isEmpty)
+          else if (displayedNotes.isEmpty)
             _buildEmptyState(context)
           else
-            _buildNotesGrid(context, state.notes),
+            _buildNotesGrid(context, displayedNotes),
         ],
       ),
     );
   }
 
-  Widget _buildAppBar(BuildContext context, NoteState state) {
+  Widget _buildAppBar(BuildContext context, NoteState state, String title) {
     if (_isSelectionMode) {
       return SliverAppBar(
         pinned: true,
