@@ -19,6 +19,7 @@ class NoteModel {
   bool isArchived = false;
   bool isTrashed = false;
   int colorIndex = 0;
+  String? folderId;
 
   Note toDomain() {
     return Note(
@@ -31,6 +32,7 @@ class NoteModel {
       isArchived: isArchived,
       isTrashed: isTrashed,
       colorIndex: colorIndex,
+      folderId: folderId,
     );
   }
 
@@ -44,6 +46,7 @@ class NoteModel {
       ..isPinned = note.isPinned
       ..isArchived = note.isArchived
       ..isTrashed = note.isTrashed
-      ..colorIndex = note.colorIndex;
+      ..colorIndex = note.colorIndex
+      ..folderId = note.folderId;
   }
 }

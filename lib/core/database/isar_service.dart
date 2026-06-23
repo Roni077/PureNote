@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../features/notes/data/models/note_model.dart';
+import '../../features/folders/data/models/folder_model.dart';
 
 
 class IsarService {
@@ -16,7 +17,7 @@ class IsarService {
       return await Isar.open(
         [
           NoteModelSchema,
-          // FolderSchema,
+          FolderModelSchema,
         ],
         directory: dir.path,
         inspector: true,

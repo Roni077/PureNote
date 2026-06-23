@@ -8,6 +8,7 @@ class Note {
   final bool isArchived;
   final bool isTrashed;
   final int colorIndex;
+  final String? folderId;
 
   Note({
     required this.id,
@@ -19,6 +20,7 @@ class Note {
     this.isArchived = false,
     this.isTrashed = false,
     this.colorIndex = 0,
+    this.folderId,
   });
 
   Note copyWith({
@@ -31,6 +33,7 @@ class Note {
     bool? isArchived,
     bool? isTrashed,
     int? colorIndex,
+    String? folderId,
   }) {
     return Note(
       id: id ?? this.id,
@@ -42,6 +45,7 @@ class Note {
       isArchived: isArchived ?? this.isArchived,
       isTrashed: isTrashed ?? this.isTrashed,
       colorIndex: colorIndex ?? this.colorIndex,
+      folderId: folderId ?? this.folderId,
     );
   }
 }
