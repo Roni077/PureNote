@@ -21,6 +21,20 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final Set<String> _selectedNoteIds = {};
   bool _isSelectionMode = false;
+  bool _isSearching = false;
+  late TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   void _toggleSelection(String id) {
     setState(() {
@@ -127,8 +141,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return SliverAppBar(
       pinned: true,
-      title: const Text('All Notes'),
+      title: _isSearching
+          ? TextField(
+              controller: _searchController,
+              autofocus: true,
+              decoration: const InputDecoration(
+                hintText: 'Search notes...',
+                border: InputBorder.none,
+              ),
+              onChanged: (query) {
+                ref.read(noteNotifierProvider.notifier).setSearchQuery(query);
+              },
+            )
+          : Text(title),
       actions: [
+        IconButton(
+          icon: Icon(_isSearching ? Icons.close : Icons.search),
+          onPressed: () {
+            setState(() {
+              _isSearching = !_isSearching;
+              if (!_isSearching) {
+                _searchController.clear();
+                ref.read(noteNotifierProvider.notifier).setSearchQuery('');
+              }
+            });
+          },
+        ),
         PopupMenuButton<NoteSortOption>(
           icon: const Icon(Icons.sort),
           onSelected: (option) {

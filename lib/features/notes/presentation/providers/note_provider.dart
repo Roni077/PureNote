@@ -43,28 +43,34 @@ class NoteState {
   final List<Note> notes;
   final bool isLoading;
   final NoteSortOption sortOption;
+  final String searchQuery;
 
   NoteState({
     this.notes = const [],
     this.isLoading = true,
     this.sortOption = NoteSortOption.dateDesc,
+    this.searchQuery = '',
   });
 
   NoteState copyWith({
     List<Note>? notes,
     bool? isLoading,
     NoteSortOption? sortOption,
+    String? searchQuery,
   }) {
     return NoteState(
       notes: notes ?? this.notes,
       isLoading: isLoading ?? this.isLoading,
       sortOption: sortOption ?? this.sortOption,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
   }
 }
 
 // State Notifier
 class NoteNotifier extends StateNotifier<NoteState> {
+  List<Note> _allNotes = [];
+  
   final GetNotesUseCase _getNotes;
   final CreateNoteUseCase _createNote;
   final UpdateNoteUseCase _updateNote;
@@ -85,11 +91,27 @@ class NoteNotifier extends StateNotifier<NoteState> {
 
   Future<void> loadNotes() async {
     state = state.copyWith(isLoading: true);
-    final notes = await _getNotes.execute();
+    _allNotes = await _getNotes.execute();
+    _applyFilters();
+  }
+
+  void _applyFilters() {
+    var filtered = _allNotes;
+    if (state.searchQuery.isNotEmpty) {
+      final q = state.searchQuery.toLowerCase();
+      filtered = filtered.where((n) {
+        return n.title.toLowerCase().contains(q) || n.content.toLowerCase().contains(q);
+      }).toList();
+    }
     state = state.copyWith(
-      notes: _sortNotes(notes, state.sortOption),
+      notes: _sortNotes(filtered, state.sortOption),
       isLoading: false,
     );
+  }
+
+  void setSearchQuery(String query) {
+    state = state.copyWith(searchQuery: query);
+    _applyFilters();
   }
 
   Future<void> addNote(Note note) async {
@@ -123,10 +145,8 @@ class NoteNotifier extends StateNotifier<NoteState> {
   }
 
   void changeSortOption(NoteSortOption option) {
-    state = state.copyWith(
-      sortOption: option,
-      notes: _sortNotes(state.notes, option),
-    );
+    state = state.copyWith(sortOption: option);
+    _applyFilters();
   }
 
   List<Note> _sortNotes(List<Note> notes, NoteSortOption option) {
