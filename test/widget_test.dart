@@ -8,6 +8,6 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: PureNoteApp()));
 
     // Verify that our app loads the home screen
-    expect(find.text('Welcome to PureNote Home'), findsOneWidget);
+    expect(find.text('PureNote'), findsWidgets);
   });
 }

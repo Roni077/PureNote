@@ -36,6 +36,10 @@ class DeleteNoteUseCase {
   Future<void> execute(String id) {
     return repository.deleteNote(id);
   }
+
+  Future<void> executeBatch(List<String> ids) {
+    return repository.deleteNotes(ids);
+  }
 }
 
 class PinNoteUseCase {
