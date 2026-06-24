@@ -1,21 +1,12 @@
-import 'dart:io';
+
 import 'package:purenote/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:purenote/ui/features/folders/views/folder_list_widget.dart';
 import 'package:purenote/ui/features/notes/views/note_card.dart';
 import 'package:purenote/ui/features/notes/view_models/note_view_model.dart';
 import 'package:purenote/ui/features/folders/view_models/folder_view_model.dart';
-import 'package:flutter/services.dart';
 
-class NewNoteIntent extends Intent {
-  const NewNoteIntent();
-}
-
-class SearchIntent extends Intent {
-  const SearchIntent();
-}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -120,35 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBarTitle = folder.name;
     }
 
-    return Shortcuts(
-      shortcuts: {
-        SingleActivator(LogicalKeyboardKey.keyN, control: !Platform.isMacOS, meta: Platform.isMacOS): const NewNoteIntent(),
-        SingleActivator(LogicalKeyboardKey.keyF, control: !Platform.isMacOS, meta: Platform.isMacOS): const SearchIntent(),
-      },
-      child: Actions(
-        actions: {
-          NewNoteIntent: CallbackAction<NewNoteIntent>(
-            onInvoke: (intent) {
-              context.pushNamed(
-                'editor',
-                queryParameters: {
-                  'folderId': selectedFolderId?.toString() ?? '',
-                },
-              );
-              return null;
-            },
-          ),
-          SearchIntent: CallbackAction<SearchIntent>(
-            onInvoke: (intent) {
-              showSearch(
-                context: context,
-                delegate: _NoteSearchDelegate(),
-              );
-              return null;
-            },
-          ),
-        },
-        child: Scaffold(
+    return Scaffold(
           appBar: _isSelectionMode
           ? AppBar(
               leading: IconButton(
@@ -179,15 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     });
                   },
                 ),
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: _NoteSearchDelegate(),
-                    );
-                  },
-                ),
                 PopupMenuButton<NoteSortOption>(
                   onSelected: (option) {
                     noteViewModel.changeSortOption(option);
@@ -209,9 +163,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-      drawer: const Drawer(
-        child: FolderListWidget(),
-      ),
       body: noteViewModel.isLoading
           ? const Center(child: CircularProgressIndicator())
           : notes.isEmpty
@@ -274,45 +225,6 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: const Icon(Icons.add),
       ),
-    ),
-    ),
     );
-  }
-}
-
-class _NoteSearchDelegate extends SearchDelegate<String> {
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: const Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-          context.read<NoteViewModel>().setSearchQuery('');
-        },
-      )
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, '');
-        context.read<NoteViewModel>().setSearchQuery('');
-      },
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    context.read<NoteViewModel>().setSearchQuery(query);
-    return Center(child: Text(AppLocalizations.of(context)!.searchApplied));
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return Container();
   }
 }
