@@ -1,0 +1,38 @@
+import 'package:flutter/material.dart';
+import 'package:purenote/domain/models/settings.dart';
+import 'package:purenote/data/repositories/settings_repository_impl.dart';
+
+class SettingsViewModel extends ChangeNotifier {
+  final SettingsRepositoryImpl settingsRepository;
+  
+  AppSettings _settings = AppSettings();
+  AppSettings get settings => _settings;
+
+  SettingsViewModel({required this.settingsRepository}) {
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final result = await settingsRepository.getSettings();
+    _settings = result ?? AppSettings();
+    notifyListeners();
+  }
+
+  Future<void> updateThemeMode(ThemeModeOption mode) async {
+    _settings = _settings.copyWith(themeMode: mode);
+    await settingsRepository.saveSettings(_settings);
+    notifyListeners();
+  }
+
+  Future<void> toggleAutoSave(bool value) async {
+    _settings = _settings.copyWith(isAutoSaveEnabled: value);
+    await settingsRepository.saveSettings(_settings);
+    notifyListeners();
+  }
+
+  Future<void> toggleMarkdown(bool value) async {
+    _settings = _settings.copyWith(isMarkdownEnabled: value);
+    await settingsRepository.saveSettings(_settings);
+    notifyListeners();
+  }
+}
