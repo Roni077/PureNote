@@ -97,10 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final noteViewModel = context.watch<NoteViewModel>();
     final folderViewModel = context.watch<FolderViewModel>();
-    final notes = noteViewModel.notes;
-    
     final selectedFolderId = folderViewModel.selectedFolderId;
     String appBarTitle = 'All Notes';
     if (selectedFolderId != null) {
@@ -133,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: const Icon(Icons.sync),
                   tooltip: AppLocalizations.of(context)!.syncNotes,
                   onPressed: () {
-                    noteViewModel.syncNotes((message) {
+                    context.read<NoteViewModel>().syncNotes((message) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(message)),
@@ -144,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 PopupMenuButton<NoteSortOption>(
                   onSelected: (option) {
-                    noteViewModel.changeSortOption(option);
+                    context.read<NoteViewModel>().changeSortOption(option);
                   },
                   itemBuilder: (context) => [
                     PopupMenuItem(
@@ -163,57 +160,62 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-      body: noteViewModel.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : notes.isEmpty
-              ? const Center(child: Text('No notes found.'))
-              : GridView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 250,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
-                    childAspectRatio: 0.8,
-                  ),
-                  itemCount: notes.length,
-                  itemBuilder: (context, index) {
-                    final note = notes[index];
-                    final isSelected = _selectedNoteIds.contains(note.id);
-                    return GestureDetector(
-                      onLongPress: () => _toggleSelectionMode(note.id),
-                      onSecondaryTapDown: (details) {
-                        _showContextMenu(context, details.globalPosition, note, noteViewModel);
-                      },
-                      onTap: () {
-                        if (_isSelectionMode) {
-                          _toggleSelectionMode(note.id);
-                        } else {
-                          context.pushNamed(
-                            'editor',
-                            queryParameters: {
-                              'id': note.id.toString(),
-                              'folderId': selectedFolderId?.toString() ?? '',
-                            },
-                          );
-                        }
-                      },
-                      child: Stack(
-                        children: [
-                          NoteCard(note: note),
-                          if (_isSelectionMode)
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Icon(
-                                isSelected ? Icons.check_circle : Icons.circle_outlined,
-                                color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-                              ),
-                            ),
-                        ],
+      body: Consumer<NoteViewModel>(
+        builder: (context, noteViewModel, child) {
+          final notes = noteViewModel.notes;
+          return noteViewModel.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : notes.isEmpty
+                  ? const Center(child: Text('No notes found.'))
+                  : GridView.builder(
+                      padding: const EdgeInsets.all(8.0),
+                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 250,
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
+                        childAspectRatio: 0.8,
                       ),
+                      itemCount: notes.length,
+                      itemBuilder: (context, index) {
+                        final note = notes[index];
+                        final isSelected = _selectedNoteIds.contains(note.id);
+                        return GestureDetector(
+                          onLongPress: () => _toggleSelectionMode(note.id),
+                          onSecondaryTapDown: (details) {
+                            _showContextMenu(context, details.globalPosition, note, noteViewModel);
+                          },
+                          onTap: () {
+                            if (_isSelectionMode) {
+                              _toggleSelectionMode(note.id);
+                            } else {
+                              context.pushNamed(
+                                'editor',
+                                queryParameters: {
+                                  'id': note.id.toString(),
+                                  'folderId': selectedFolderId?.toString() ?? '',
+                                },
+                              );
+                            }
+                          },
+                          child: Stack(
+                            children: [
+                              NoteCard(note: note),
+                              if (_isSelectionMode)
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: Icon(
+                                    isSelected ? Icons.check_circle : Icons.circle_outlined,
+                                    color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
                     );
-                  },
-                ),
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           context.pushNamed(

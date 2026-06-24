@@ -15,7 +15,7 @@ class SettingsScreen extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.color_lens),
-            title: const Text('Appearance'),
+            title: Text(AppLocalizations.of(context)!.appearance),
             subtitle: const Text('Theme mode, Markdown preview'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
@@ -25,7 +25,7 @@ class SettingsScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.security),
-            title: const Text('Security'),
+            title: Text(AppLocalizations.of(context)!.security),
             subtitle: const Text('App lock, Biometrics'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
@@ -35,7 +35,7 @@ class SettingsScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.save),
-            title: const Text('Data & Backup'),
+            title: Text(AppLocalizations.of(context)!.dataBackup),
             subtitle: const Text('Auto-save, Export & Import backups'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {

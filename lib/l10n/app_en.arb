@@ -37,5 +37,10 @@
   "sortByTitle": "Sort by Title (A-Z)",
   "noNotesFound": "No notes found.",
   "searchApplied": "Search applied. Please press back to view results.",
-  "appSettings": "App Settings"
+  "appSettings": "App Settings",
+  "trashBin": "Trash Bin",
+  "appearance": "Appearance",
+  "security": "Security",
+  "dataBackup": "Data & Backup",
+  "disableAppLock": "Disable App Lock"
 }

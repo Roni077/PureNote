@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:purenote/ui/features/auth/view_models/auth_view_model.dart';
+import 'package:purenote/l10n/app_localizations.dart';
 
 class SecuritySettingsScreen extends StatelessWidget {
   const SecuritySettingsScreen({super.key});
@@ -9,7 +10,7 @@ class SecuritySettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Security'),
+        title: Text(AppLocalizations.of(context)!.security),
       ),
       body: ListView(
         children: [
@@ -27,7 +28,7 @@ class SecuritySettingsScreen extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.lock),
-            title: const Text('Disable App Lock'),
+            title: Text(AppLocalizations.of(context)!.disableAppLock),
             subtitle: const Text('App lock is currently enabled.'),
             onTap: () async {
               await authViewModel.removePin();

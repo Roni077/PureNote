@@ -87,7 +87,7 @@ class FoldersScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.delete),
-            title: const Text('Trash Bin'),
+            title: Text(AppLocalizations.of(context)!.trashBin),
             onTap: () {
               context.push('/trash');
             },

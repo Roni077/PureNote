@@ -127,4 +127,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appSettings => 'App Settings';
+
+  @override
+  String get trashBin => 'Trash Bin';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get security => 'Security';
+
+  @override
+  String get dataBackup => 'Data & Backup';
+
+  @override
+  String get disableAppLock => 'Disable App Lock';
 }

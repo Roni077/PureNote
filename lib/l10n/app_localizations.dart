@@ -327,6 +327,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'App Settings'**
   String get appSettings;
+
+  /// No description provided for @trashBin.
+  ///
+  /// In en, this message translates to:
+  /// **'Trash Bin'**
+  String get trashBin;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @security.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get security;
+
+  /// No description provided for @dataBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Data & Backup'**
+  String get dataBackup;
+
+  /// No description provided for @disableAppLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable App Lock'**
+  String get disableAppLock;
 }
 
 class _AppLocalizationsDelegate

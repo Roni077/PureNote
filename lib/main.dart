@@ -4,9 +4,11 @@ import 'dart:io';
 
 import 'package:purenote/app/purenote_app.dart';
 import 'package:purenote/app/dependency_injection.dart';
+import 'package:purenote/ui/core/utils/error_reporter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  ErrorReporter.initialize();
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();

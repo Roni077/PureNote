@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
@@ -16,13 +18,26 @@ class AuthService {
     return pin != null && pin.isNotEmpty;
   }
 
+
+  String _hashPin(String pin) {
+    final bytes = utf8.encode("${pin}purenote_salt_2026");
+    return sha256.convert(bytes).toString();
+  }
+
   Future<void> setPin(String pin) async {
-    await _secureStorage.write(key: _pinKey, value: pin);
+    await _secureStorage.write(key: _pinKey, value: _hashPin(pin));
   }
 
   Future<bool> verifyPin(String pin) async {
     final storedPin = await _secureStorage.read(key: _pinKey);
-    return storedPin == pin;
+    if (storedPin != null && storedPin.length == 4) {
+      if (storedPin == pin) {
+        await setPin(pin); // upgrade to hash
+        return true;
+      }
+      return false;
+    }
+    return storedPin == _hashPin(pin);
   }
 
   Future<void> removePin() async {
