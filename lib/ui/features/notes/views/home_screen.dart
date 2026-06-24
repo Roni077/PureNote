@@ -99,17 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final folderViewModel = context.watch<FolderViewModel>();
     final selectedFolderId = folderViewModel.selectedFolderId;
-    String appBarTitle = 'All Notes';
-    if (selectedFolderId != null) {
-      final folder = folderViewModel.folders.firstWhere(
-        (f) => f.id == selectedFolderId,
-        orElse: () => folderViewModel.folders.first,
-      );
-      appBarTitle = folder.name;
-    }
 
     return Scaffold(
-          appBar: _isSelectionMode
+      appBar: _isSelectionMode
           ? AppBar(
               leading: IconButton(
                 icon: const Icon(Icons.close),
@@ -124,8 +116,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             )
           : AppBar(
-              title: Text(appBarTitle),
+              title: const Text('PureNote', style: TextStyle(fontWeight: FontWeight.bold)),
               actions: [
+                IconButton(
+                  icon: const Icon(Icons.create_new_folder_outlined),
+                  tooltip: AppLocalizations.of(context)!.folders,
+                  onPressed: () {
+                    context.pushNamed('folders');
+                  },
+                ),
                 IconButton(
                   icon: const Icon(Icons.sync),
                   tooltip: AppLocalizations.of(context)!.syncNotes,
@@ -160,72 +159,114 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-      body: Consumer<NoteViewModel>(
-        builder: (context, noteViewModel, child) {
-          final notes = noteViewModel.notes;
-          return noteViewModel.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : notes.isEmpty
-                  ? const Center(child: Text('No notes found.'))
-                  : GridView.builder(
-                      padding: const EdgeInsets.all(8.0),
-                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 250,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 8.0,
-                        childAspectRatio: 0.8,
-                      ),
-                      itemCount: notes.length,
-                      itemBuilder: (context, index) {
-                        final note = notes[index];
-                        final isSelected = _selectedNoteIds.contains(note.id);
-                        return GestureDetector(
-                          onLongPress: () => _toggleSelectionMode(note.id),
-                          onSecondaryTapDown: (details) {
-                            _showContextMenu(context, details.globalPosition, note, noteViewModel);
-                          },
-                          onTap: () {
-                            if (_isSelectionMode) {
-                              _toggleSelectionMode(note.id);
-                            } else {
-                              context.pushNamed(
-                                'editor',
-                                queryParameters: {
-                                  'id': note.id.toString(),
-                                  'folderId': selectedFolderId?.toString() ?? '',
-                                },
-                              );
+      body: Column(
+        children: [
+          // Folder Filter Chips
+          Consumer<FolderViewModel>(
+            builder: (context, folderViewModel, child) {
+              final folders = folderViewModel.folders;
+              final selectedId = folderViewModel.selectedFolderId;
+              return Container(
+                height: 50,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: folders.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      final isSelected = selectedId == null;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: ChoiceChip(
+                          label: Text(AppLocalizations.of(context)!.allNotes),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            if (selected) {
+                              folderViewModel.selectFolder(null);
                             }
                           },
-                          child: Stack(
-                            children: [
-                              NoteCard(note: note),
-                              if (_isSelectionMode)
-                                Positioned(
-                                  top: 8,
-                                  right: 8,
-                                  child: Icon(
-                                    isSelected ? Icons.check_circle : Icons.circle_outlined,
-                                    color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        );
-                      },
+                        ),
+                      );
+                    }
+                    final folder = folders[index - 1];
+                    final isSelected = selectedId == folder.id;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ChoiceChip(
+                        label: Text(folder.name),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          if (selected) {
+                            folderViewModel.selectFolder(folder.id);
+                          }
+                        },
+                      ),
                     );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.pushNamed(
-            'editor',
-            queryParameters: {
-              'folderId': selectedFolderId?.toString() ?? '',
+                  },
+                ),
+              );
             },
-          );
-        },
-        child: const Icon(Icons.add),
+          ),
+          
+          Expanded(
+            child: Consumer<NoteViewModel>(
+              builder: (context, noteViewModel, child) {
+                final notes = noteViewModel.notes;
+                return noteViewModel.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : notes.isEmpty
+                        ? const Center(child: Text('No notes found.'))
+                        : GridView.builder(
+                            padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 100.0), // Padding for Floating Nav Bar
+                            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 250,
+                              crossAxisSpacing: 8.0,
+                              mainAxisSpacing: 8.0,
+                              childAspectRatio: 0.8,
+                            ),
+                            itemCount: notes.length,
+                            itemBuilder: (context, index) {
+                              final note = notes[index];
+                              final isSelected = _selectedNoteIds.contains(note.id);
+                              return GestureDetector(
+                                onLongPress: () => _toggleSelectionMode(note.id),
+                                onSecondaryTapDown: (details) {
+                                  _showContextMenu(context, details.globalPosition, note, noteViewModel);
+                                },
+                                onTap: () {
+                                  if (_isSelectionMode) {
+                                    _toggleSelectionMode(note.id);
+                                  } else {
+                                    context.pushNamed(
+                                      'editor',
+                                      queryParameters: {
+                                        'id': note.id.toString(),
+                                        'folderId': selectedFolderId?.toString() ?? '',
+                                      },
+                                    );
+                                  }
+                                },
+                                child: Stack(
+                                  children: [
+                                    NoteCard(note: note),
+                                    if (_isSelectionMode)
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: Icon(
+                                          isSelected ? Icons.check_circle : Icons.circle_outlined,
+                                          color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

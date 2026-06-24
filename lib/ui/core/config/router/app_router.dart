@@ -50,15 +50,6 @@ final appRouter = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/folders',
-              name: 'folders',
-              builder: (context, state) => const FoldersScreen(),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
               path: '/search',
               name: 'search',
               builder: (context, state) => const SearchScreen(),
@@ -101,6 +92,11 @@ final appRouter = GoRouter(
         final folderId = state.uri.queryParameters['folderId'];
         return NoteEditorScreen(noteId: noteId, folderId: folderId);
       },
+    ),
+    GoRoute(
+      path: '/folders',
+      name: 'folders',
+      builder: (context, state) => const FoldersScreen(),
     ),
     GoRoute(
       path: '/trash',
