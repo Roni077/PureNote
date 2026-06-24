@@ -41,6 +41,12 @@ class SettingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> completeOnboarding() async {
+    _settings = _settings.copyWith(hasCompletedOnboarding: true);
+    await settingsRepository.saveSettings(_settings);
+    notifyListeners();
+  }
+
   Future<void> exportBackup() async {
     await backupService.exportBackup();
   }

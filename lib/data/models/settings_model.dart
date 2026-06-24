@@ -12,12 +12,14 @@ class SettingsModel {
 
   late bool isAutoSaveEnabled;
   late bool isMarkdownEnabled;
+  late bool hasCompletedOnboarding;
 
   AppSettings toDomain() {
     return AppSettings(
       themeMode: themeMode,
       isAutoSaveEnabled: isAutoSaveEnabled,
       isMarkdownEnabled: isMarkdownEnabled,
+      hasCompletedOnboarding: hasCompletedOnboarding,
     );
   }
 
@@ -26,6 +28,7 @@ class SettingsModel {
       ..id = 1
       ..themeMode = settings.themeMode
       ..isAutoSaveEnabled = settings.isAutoSaveEnabled
-      ..isMarkdownEnabled = settings.isMarkdownEnabled;
+      ..isMarkdownEnabled = settings.isMarkdownEnabled
+      ..hasCompletedOnboarding = settings.hasCompletedOnboarding;
   }
 }

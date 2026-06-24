@@ -17,18 +17,23 @@ const SettingsModelSchema = CollectionSchema(
   name: r'SettingsModel',
   id: 4013777327486952906,
   properties: {
-    r'isAutoSaveEnabled': PropertySchema(
+    r'hasCompletedOnboarding': PropertySchema(
       id: 0,
+      name: r'hasCompletedOnboarding',
+      type: IsarType.bool,
+    ),
+    r'isAutoSaveEnabled': PropertySchema(
+      id: 1,
       name: r'isAutoSaveEnabled',
       type: IsarType.bool,
     ),
     r'isMarkdownEnabled': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'isMarkdownEnabled',
       type: IsarType.bool,
     ),
     r'themeMode': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'themeMode',
       type: IsarType.byte,
       enumMap: _SettingsModelthemeModeEnumValueMap,
@@ -63,9 +68,10 @@ void _settingsModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeBool(offsets[0], object.isAutoSaveEnabled);
-  writer.writeBool(offsets[1], object.isMarkdownEnabled);
-  writer.writeByte(offsets[2], object.themeMode.index);
+  writer.writeBool(offsets[0], object.hasCompletedOnboarding);
+  writer.writeBool(offsets[1], object.isAutoSaveEnabled);
+  writer.writeBool(offsets[2], object.isMarkdownEnabled);
+  writer.writeByte(offsets[3], object.themeMode.index);
 }
 
 SettingsModel _settingsModelDeserialize(
@@ -75,11 +81,12 @@ SettingsModel _settingsModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = SettingsModel();
+  object.hasCompletedOnboarding = reader.readBool(offsets[0]);
   object.id = id;
-  object.isAutoSaveEnabled = reader.readBool(offsets[0]);
-  object.isMarkdownEnabled = reader.readBool(offsets[1]);
+  object.isAutoSaveEnabled = reader.readBool(offsets[1]);
+  object.isMarkdownEnabled = reader.readBool(offsets[2]);
   object.themeMode =
-      _SettingsModelthemeModeValueEnumMap[reader.readByteOrNull(offsets[2])] ??
+      _SettingsModelthemeModeValueEnumMap[reader.readByteOrNull(offsets[3])] ??
           ThemeModeOption.system;
   return object;
 }
@@ -96,6 +103,8 @@ P _settingsModelDeserializeProp<P>(
     case 1:
       return (reader.readBool(offset)) as P;
     case 2:
+      return (reader.readBool(offset)) as P;
+    case 3:
       return (_SettingsModelthemeModeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           ThemeModeOption.system) as P;
@@ -211,6 +220,16 @@ extension SettingsModelQueryWhere
 
 extension SettingsModelQueryFilter
     on QueryBuilder<SettingsModel, SettingsModel, QFilterCondition> {
+  QueryBuilder<SettingsModel, SettingsModel, QAfterFilterCondition>
+      hasCompletedOnboardingEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'hasCompletedOnboarding',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<SettingsModel, SettingsModel, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -351,6 +370,20 @@ extension SettingsModelQueryLinks
 extension SettingsModelQuerySortBy
     on QueryBuilder<SettingsModel, SettingsModel, QSortBy> {
   QueryBuilder<SettingsModel, SettingsModel, QAfterSortBy>
+      sortByHasCompletedOnboarding() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasCompletedOnboarding', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SettingsModel, SettingsModel, QAfterSortBy>
+      sortByHasCompletedOnboardingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasCompletedOnboarding', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SettingsModel, SettingsModel, QAfterSortBy>
       sortByIsAutoSaveEnabled() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isAutoSaveEnabled', Sort.asc);
@@ -394,6 +427,20 @@ extension SettingsModelQuerySortBy
 
 extension SettingsModelQuerySortThenBy
     on QueryBuilder<SettingsModel, SettingsModel, QSortThenBy> {
+  QueryBuilder<SettingsModel, SettingsModel, QAfterSortBy>
+      thenByHasCompletedOnboarding() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasCompletedOnboarding', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SettingsModel, SettingsModel, QAfterSortBy>
+      thenByHasCompletedOnboardingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hasCompletedOnboarding', Sort.desc);
+    });
+  }
+
   QueryBuilder<SettingsModel, SettingsModel, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -451,6 +498,13 @@ extension SettingsModelQuerySortThenBy
 extension SettingsModelQueryWhereDistinct
     on QueryBuilder<SettingsModel, SettingsModel, QDistinct> {
   QueryBuilder<SettingsModel, SettingsModel, QDistinct>
+      distinctByHasCompletedOnboarding() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hasCompletedOnboarding');
+    });
+  }
+
+  QueryBuilder<SettingsModel, SettingsModel, QDistinct>
       distinctByIsAutoSaveEnabled() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isAutoSaveEnabled');
@@ -476,6 +530,13 @@ extension SettingsModelQueryProperty
   QueryBuilder<SettingsModel, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<SettingsModel, bool, QQueryOperations>
+      hasCompletedOnboardingProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hasCompletedOnboarding');
     });
   }
 

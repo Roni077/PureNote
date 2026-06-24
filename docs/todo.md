@@ -87,3 +87,9 @@ This is the detailed, step-by-step TODO list for the PureNote application, adher
 - [x] Implement Desktop Context Menus (right-click) for Note Cards.
 - [x] Accessibility review (Semantic labels, High Contrast, Screen reader testing).
 - [x] Extensive real-device testing across Android, iOS, and Windows.
+
+## Phase 12: Onboarding & Setup Screen
+- [ ] Create `OnboardingScreen` UI (Welcome, Features overview).
+- [ ] Add permission request step in onboarding (Notifications, Storage).
+- [ ] Save onboarding completion state in `shared_preferences` or `SettingsViewModel`.
+- [ ] Update router to show `OnboardingScreen` on first launch instead of `HomeScreen`.
