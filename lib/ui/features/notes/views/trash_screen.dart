@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:purenote/l10n/app_localizations.dart';
 import 'package:purenote/ui/features/notes/view_models/note_view_model.dart';
 
 class TrashScreen extends StatefulWidget {

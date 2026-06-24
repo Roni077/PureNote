@@ -108,6 +108,9 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
       _currentNote = updatedNote;
     } else {
       await noteViewModel.updateNote(updatedNote);
+      if (mounted) {
+        Navigator.pop(context);
+      }
       _currentNote = updatedNote;
     }
   }
@@ -142,7 +145,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
                 lastDate: DateTime.now().add(const Duration(days: 365)),
               );
               if (date == null) return;
-
+              if (!context.mounted) return;
               final time = await showTimePicker(
                 context: context,
                 initialTime: TimeOfDay.now(),

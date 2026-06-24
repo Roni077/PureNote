@@ -1,5 +1,4 @@
 import 'package:purenote/domain/models/note.dart';
-import 'package:purenote/domain/models/note.dart';
 
 abstract class NoteRepository {
   Future<List<Note>> getNotes();

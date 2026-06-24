@@ -5,6 +5,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:purenote/ui/core/theme/app_theme.dart';
 import 'package:purenote/ui/core/config/router/app_router.dart';
 import 'package:purenote/ui/features/settings/view_models/settings_view_model.dart';
+import 'package:purenote/ui/features/auth/view_models/auth_view_model.dart';
+import 'package:purenote/ui/features/auth/views/lock_screen.dart';
 import 'package:purenote/l10n/app_localizations.dart';
 
 class PureNoteApp extends StatelessWidget {
@@ -36,6 +38,18 @@ class PureNoteApp extends StatelessWidget {
             Locale('en', ''),
           ],
           debugShowCheckedModeBanner: false,
+          builder: (context, routerChild) {
+            return Consumer<AuthViewModel>(
+              builder: (context, authViewModel, _) {
+                return Stack(
+                  children: [
+                    if (routerChild != null) routerChild,
+                    if (authViewModel.isLocked) const LockScreen(),
+                  ],
+                );
+              },
+            );
+          },
         );
       },
     );

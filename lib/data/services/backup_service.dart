@@ -128,6 +128,7 @@ class BackupService {
         await file.writeAsString(jsonString);
         
         final xFile = XFile(file.path, mimeType: 'application/json');
+        // ignore: deprecated_member_use
         await Share.shareXFiles([xFile], subject: 'PureNote Backup');
       }
     } catch (e) {

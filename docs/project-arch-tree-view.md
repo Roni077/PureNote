@@ -1,6 +1,6 @@
 # PureNote Project Architecture
 
-This document defines the Clean Architecture, Feature-First project structure for the PureNote cross-platform application.
+This document defines the MVVM Feature-First project structure for the PureNote cross-platform application.
 
 ```text
 purenote/
@@ -9,113 +9,51 @@ purenote/
 ├── lib/
 │   ├── main.dart
 │   ├── app/
-│   │   ├── purenote_app.dart              # MaterialApp configuration
-│   │   └── app_providers.dart             # Global level providers
-│   ├── config/
-│   │   ├── router/
-│   │   │   ├── app_router.dart            # GoRouter configuration
-│   │   │   └── app_routes.dart            # Route name constants
-│   │   └── constants/
-│   │       ├── app_constants.dart
-│   │       └── env.dart
-│   ├── core/
-│   │   ├── database/
-│   │   │   ├── isar_service.dart          # Local database initialization
-│   │   │   └── database_exceptions.dart
-│   │   ├── theme/
-│   │   │   ├── app_theme.dart             # Light/Dark Theme logic
-│   │   │   ├── color_schemes.dart         # Material 3 dynamically generated colors
-│   │   │   └── typography.dart            # Text styles
-│   │   ├── security/
-│   │   │   ├── secure_storage.dart        # Encryption key management
-│   │   │   └── biometric_service.dart     # Local auth integration
-│   │   └── utils/
-│   │       ├── date_formatter.dart
-│   │       └── logger.dart
+│   │   ├── dependency_injection.dart      # Service Locator setup
+│   │   └── purenote_app.dart              # MaterialApp configuration
+│   ├── data/
+│   │   ├── models/                        # Isar Data Models
+│   │   ├── repositories/                  # Repository implementations
+│   │   └── services/                      # Background services (Auth, Backup, Notification, Sync)
+│   ├── domain/
+│   │   ├── models/                        # Domain entities
+│   │   └── use_cases/
+│   ├── l10n/                              # Localization files
 │   ├── shared/
-│   │   ├── widgets/
-│   │   │   ├── adaptive_scaffold.dart     # Desktop sidebar + Mobile bottom nav
-│   │   │   ├── custom_app_bar.dart
-│   │   │   └── empty_state.dart
-│   │   └── extensions/
-│   │       └── context_extensions.dart
-│   └── features/
-│       ├── notes/
-│       │   ├── domain/
-│       │   │   ├── entities/
-│       │   │   │   └── note.dart
-│       │   │   ├── repositories/
-│       │   │   │   └── note_repository.dart
-│       │   │   └── usecases/
-│       │   │       ├── create_note.dart
-│       │   │       ├── delete_note.dart
-│       │   │       ├── get_notes.dart
-│       │   │       └── update_note.dart
-│       │   ├── data/
-│       │   │   ├── models/
-│       │   │   │   └── note_model.dart    # Isar collection & Freezed model
-│       │   │   ├── datasources/
-│       │   │   │   └── note_local_data_source.dart
-│       │   │   └── repositories/
-│       │   │       └── note_repository_impl.dart
-│       │   └── presentation/
-│       │       ├── providers/
-│       │       │   ├── note_provider.dart
-│       │       │   └── note_list_state.dart
-│       │       ├── screens/
-│       │       │   ├── home_screen.dart
-│       │       │   └── edit_note_screen.dart
-│       │       └── widgets/
-│       │           ├── note_card.dart
-│       │           └── markdown_toolbar.dart
-│       ├── folders/
-│       │   ├── domain/
-│       │   ├── data/
-│       │   └── presentation/
-│       ├── tags/
-│       │   ├── domain/
-│       │   ├── data/
-│       │   └── presentation/
-│       ├── search/
-│       │   ├── domain/
-│       │   ├── data/
-│       │   └── presentation/
-│       │       └── screens/
-│       │           └── search_screen.dart
-│       ├── backup/
-│       │   ├── domain/
-│       │   ├── data/
-│       │   └── presentation/
-│       ├── settings/
-│       │   └── presentation/
-│       │       └── screens/
-│       │           └── settings_screen.dart
-│       └── reminders/
-│           ├── domain/
-│           ├── data/
-│           └── presentation/
+│   │   ├── extensions/
+│   │   └── widgets/
+│   │       └── adaptive_scaffold.dart     # Desktop sidebar + Mobile bottom nav
+│   └── ui/
+│       ├── core/
+│       │   ├── config/
+│       │   │   └── router/app_router.dart # GoRouter configuration
+│       │   ├── theme/app_theme.dart       # Material 3 dynamically generated colors
+│       │   └── utils/
+│       └── features/                      # UI Modules
+│           ├── auth/
+│           │   ├── view_models/           # ChangeNotifiers for state
+│           │   └── views/                 # Flutter widgets & screens
+│           ├── folders/
+│           ├── notes/
+│           ├── settings/
+│           └── tags/
 └── test/
-    ├── features/
-    │   └── notes/
-    │       ├── domain/
-    │       ├── data/
-    │       └── presentation/
-    └── core/
+    ├── data/
+    └── ui/
 ```
 
 ## Layer Responsibilities
 
-1. **Domain Layer**: 
-   - Pure Dart code. No Flutter dependencies. 
-   - Contains enterprise business rules (Entities), application business rules (Use Cases), and abstract interfaces (Repositories).
-2. **Data Layer**: 
-   - Handles data retrieval and storage. 
-   - Implements the Repositories defined in the Domain layer. 
-   - Contains DTOs (Data Transfer Objects), Isar Collections, and local data sources.
-3. **Presentation Layer**: 
-   - Flutter UI code (Widgets, Screens). 
-   - Riverpod StateNotifiers/Providers acting as Presenters/Controllers to link UI with Use Cases.
-4. **Core**:
-   - Cross-cutting concerns like Database connection, Security services, Theme, and Error Handling.
-5. **Shared**:
-   - Reusable UI components and utilities that are not specific to a single feature.
+1. **UI Layer (`lib/ui/`)**: 
+   - Feature-based structure (`features/notes`, `features/settings`).
+   - Contains Flutter **Views** (Widgets, Screens) and **ViewModels** (`ChangeNotifier` classes via `Provider` package).
+   - ViewModels act as the state managers and connect the UI to Repositories/Services.
+2. **Data Layer (`lib/data/`)**: 
+   - Handles data retrieval and storage.
+   - Contains `Isar` Models (DTOs), local data sources, Repositories, and backend/native Services (e.g., `BackupService`, `AuthService`).
+3. **Domain Layer (`lib/domain/`)**:
+   - Pure Dart code defining core business entities and abstract interfaces.
+4. **App/Core Layer (`lib/app/`, `lib/ui/core/`)**:
+   - Cross-cutting concerns like Database connection, Dependency Injection (`dependency_injection.dart`), Router (`app_router.dart`), and Theme.
+5. **Shared Layer (`lib/shared/`)**:
+   - Reusable UI components and extensions.

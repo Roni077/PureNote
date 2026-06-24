@@ -19,6 +19,8 @@ import 'package:purenote/ui/features/folders/view_models/folder_view_model.dart'
 import 'package:purenote/ui/features/notes/view_models/note_view_model.dart';
 import 'package:purenote/ui/features/tags/view_models/tag_view_model.dart';
 import 'package:purenote/ui/features/settings/view_models/settings_view_model.dart';
+import 'package:purenote/data/services/auth_service.dart';
+import 'package:purenote/ui/features/auth/view_models/auth_view_model.dart';
 
 class AppDependencyInjection extends StatelessWidget {
   final Widget child;
@@ -32,6 +34,7 @@ class AppDependencyInjection extends StatelessWidget {
         // Services
         Provider<IsarService>(create: (_) => IsarService()),
         Provider<SyncService>(create: (_) => SyncService()),
+        Provider<AuthService>(create: (_) => AuthService()),
         Provider<NotificationService>(create: (_) => NotificationService()..initialize()),
         ProxyProvider<IsarService, BackupService>(
           update: (_, isar, __) => BackupService(isar.db),
@@ -66,6 +69,10 @@ class AppDependencyInjection extends StatelessWidget {
         ),
 
         // ViewModels
+        ChangeNotifierProxyProvider<AuthService, AuthViewModel>(
+          create: (context) => AuthViewModel(authService: context.read<AuthService>()),
+          update: (_, auth, vm) => vm ?? AuthViewModel(authService: auth),
+        ),
         ChangeNotifierProxyProvider2<SettingsRepositoryImpl, BackupService, SettingsViewModel>(
           create: (context) => SettingsViewModel(
             settingsRepository: context.read<SettingsRepositoryImpl>(),

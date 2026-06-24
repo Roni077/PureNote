@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:purenote/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,15 @@ import 'package:purenote/ui/features/folders/views/folder_list_widget.dart';
 import 'package:purenote/ui/features/notes/views/note_card.dart';
 import 'package:purenote/ui/features/notes/view_models/note_view_model.dart';
 import 'package:purenote/ui/features/folders/view_models/folder_view_model.dart';
+import 'package:flutter/services.dart';
+
+class NewNoteIntent extends Intent {
+  const NewNoteIntent();
+}
+
+class SearchIntent extends Intent {
+  const SearchIntent();
+}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -52,6 +62,48 @@ class _HomeScreenState extends State<HomeScreen> {
     _clearSelection();
   }
 
+  void _showContextMenu(BuildContext context, Offset offset, dynamic note, NoteViewModel viewModel) {
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(offset.dx, offset.dy, offset.dx, offset.dy),
+      items: [
+        PopupMenuItem(
+          value: 'open',
+          child: const Text('Open'),
+          onTap: () {
+            context.pushNamed(
+              'editor',
+              queryParameters: {
+                'id': note.id.toString(),
+              },
+            );
+          },
+        ),
+        PopupMenuItem(
+          value: 'pin',
+          child: Text(note.isPinned ? 'Unpin' : 'Pin'),
+          onTap: () {
+            viewModel.updateNote(note.copyWith(isPinned: !note.isPinned));
+          },
+        ),
+        PopupMenuItem(
+          value: 'archive',
+          child: const Text('Archive'),
+          onTap: () {
+            viewModel.updateNote(note.copyWith(isArchived: true));
+          },
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          onTap: () {
+            viewModel.updateNote(note.copyWith(isTrashed: true));
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final noteViewModel = context.watch<NoteViewModel>();
@@ -68,8 +120,36 @@ class _HomeScreenState extends State<HomeScreen> {
       appBarTitle = folder.name;
     }
 
-    return Scaffold(
-      appBar: _isSelectionMode
+    return Shortcuts(
+      shortcuts: {
+        SingleActivator(LogicalKeyboardKey.keyN, control: !Platform.isMacOS, meta: Platform.isMacOS): const NewNoteIntent(),
+        SingleActivator(LogicalKeyboardKey.keyF, control: !Platform.isMacOS, meta: Platform.isMacOS): const SearchIntent(),
+      },
+      child: Actions(
+        actions: {
+          NewNoteIntent: CallbackAction<NewNoteIntent>(
+            onInvoke: (intent) {
+              context.pushNamed(
+                'editor',
+                queryParameters: {
+                  'folderId': selectedFolderId?.toString() ?? '',
+                },
+              );
+              return null;
+            },
+          ),
+          SearchIntent: CallbackAction<SearchIntent>(
+            onInvoke: (intent) {
+              showSearch(
+                context: context,
+                delegate: _NoteSearchDelegate(),
+              );
+              return null;
+            },
+          ),
+        },
+        child: Scaffold(
+          appBar: _isSelectionMode
           ? AppBar(
               leading: IconButton(
                 icon: const Icon(Icons.close),
@@ -138,8 +218,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ? const Center(child: Text('No notes found.'))
               : GridView.builder(
                   padding: const EdgeInsets.all(8.0),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 250,
                     crossAxisSpacing: 8.0,
                     mainAxisSpacing: 8.0,
                     childAspectRatio: 0.8,
@@ -150,6 +230,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     final isSelected = _selectedNoteIds.contains(note.id);
                     return GestureDetector(
                       onLongPress: () => _toggleSelectionMode(note.id),
+                      onSecondaryTapDown: (details) {
+                        _showContextMenu(context, details.globalPosition, note, noteViewModel);
+                      },
                       onTap: () {
                         if (_isSelectionMode) {
                           _toggleSelectionMode(note.id);
@@ -191,6 +274,8 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: const Icon(Icons.add),
       ),
+    ),
+    ),
     );
   }
 }

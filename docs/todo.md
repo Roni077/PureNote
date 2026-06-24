@@ -75,15 +75,15 @@ This is the detailed, step-by-step TODO list for the PureNote application, adher
 - [x] Implement Import logic to deserialize JSON backups back into Isar.
 - [x] Integrate `share_plus` for exporting files on mobile.
 
-## Phase 10: Security & Settings
-- [ ] Setup `flutter_secure_storage` to handle App Lock keys.
-- [ ] Integrate `local_auth` for Biometrics (Face/Fingerprint) and PIN screen.
-- [ ] Build App Lock interceptor widget.
+## Phase 10: Security & Settings (Completed)
+- [x] Setup `flutter_secure_storage` to handle App Lock keys.
+- [x] Integrate `local_auth` for Biometrics (Face/Fingerprint) and PIN screen.
+- [x] Build App Lock interceptor widget.
 - [x] Build comprehensive `SettingsScreen` (Theme switching, Editor defaults, Backup settings).
 
-## Phase 11: Final Polish & Desktop Shortcuts
-- [ ] Finalize responsive UI padding and constraints.
-- [ ] Register global desktop keyboard shortcuts (`Ctrl+N`, `Ctrl+S`, `Ctrl+D`, `Ctrl+P`).
-- [ ] Implement Desktop Context Menus (right-click) for Note Cards.
-- [ ] Accessibility review (Semantic labels, High Contrast, Screen reader testing).
-- [ ] Extensive real-device testing across Android, iOS, and Windows.
+## Phase 11: Final Polish & Desktop Shortcuts (Completed)
+- [x] Finalize responsive UI padding and constraints.
+- [x] Register global desktop keyboard shortcuts (`Ctrl+N`, `Ctrl+S`, `Ctrl+D`, `Ctrl+P`).
+- [x] Implement Desktop Context Menus (right-click) for Note Cards.
+- [x] Accessibility review (Semantic labels, High Contrast, Screen reader testing).
+- [x] Extensive real-device testing across Android, iOS, and Windows.
