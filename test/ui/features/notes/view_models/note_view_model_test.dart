@@ -21,9 +21,10 @@ void main() {
 
   group('NoteViewModel', () {
     test('initialization fetches notes and updates state', () async {
+      final now = DateTime.now();
       final mockNotes = [
-        Note(id: '1', title: 'Test Note 1', content: 'Content 1', createdAt: DateTime.now(), updatedAt: DateTime.now()),
-        Note(id: '2', title: 'Test Note 2', content: 'Content 2', createdAt: DateTime.now(), updatedAt: DateTime.now()),
+        Note(id: '1', title: 'Test Note 1', content: 'Content 1', createdAt: now, updatedAt: now),
+        Note(id: '2', title: 'Test Note 2', content: 'Content 2', createdAt: now.subtract(const Duration(hours: 1)), updatedAt: now.subtract(const Duration(hours: 1))),
       ];
       when(() => mockRepository.getNotes()).thenAnswer((_) async => mockNotes);
 

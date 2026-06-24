@@ -8,18 +8,29 @@ import 'package:purenote/ui/features/settings/views/settings_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:purenote/l10n/app_localizations.dart';
 
+import 'package:purenote/ui/features/auth/view_models/auth_view_model.dart';
+
 class MockSettingsViewModel extends Mock implements SettingsViewModel {}
+class MockAuthViewModel extends Mock implements AuthViewModel {}
 
 void main() {
   late MockSettingsViewModel mockViewModel;
+  late MockAuthViewModel mockAuthViewModel;
 
   setUp(() {
     mockViewModel = MockSettingsViewModel();
+    mockAuthViewModel = MockAuthViewModel();
+    
+    when(() => mockAuthViewModel.hasPin).thenReturn(false);
+    when(() => mockAuthViewModel.canUseBiometrics).thenReturn(false);
   });
 
   Widget createWidgetUnderTest() {
-    return ChangeNotifierProvider<SettingsViewModel>.value(
-      value: mockViewModel,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsViewModel>.value(value: mockViewModel),
+        ChangeNotifierProvider<AuthViewModel>.value(value: mockAuthViewModel),
+      ],
       child: const MaterialApp(
         localizationsDelegates: [
           AppLocalizations.delegate,
