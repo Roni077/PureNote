@@ -7,6 +7,10 @@ import 'package:purenote/ui/features/settings/view_models/settings_view_model.da
 import 'package:purenote/ui/features/notes/views/trash_screen.dart';
 import 'package:purenote/ui/features/onboarding/views/onboarding_screen.dart';
 
+import 'package:purenote/ui/features/settings/views/appearance_settings_screen.dart';
+import 'package:purenote/ui/features/settings/views/backup_settings_screen.dart';
+import 'package:purenote/ui/features/settings/views/security_settings_screen.dart';
+
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
@@ -34,6 +38,23 @@ final appRouter = GoRouter(
       path: '/settings',
       name: 'settings',
       builder: (context, state) => const SettingsScreen(),
+      routes: [
+        GoRoute(
+          path: 'appearance',
+          name: 'appearance_settings',
+          builder: (context, state) => const AppearanceSettingsScreen(),
+        ),
+        GoRoute(
+          path: 'security',
+          name: 'security_settings',
+          builder: (context, state) => const SecuritySettingsScreen(),
+        ),
+        GoRoute(
+          path: 'backup',
+          name: 'backup_settings',
+          builder: (context, state) => const BackupSettingsScreen(),
+        ),
+      ],
     ),
     GoRoute(
       path: '/trash',
