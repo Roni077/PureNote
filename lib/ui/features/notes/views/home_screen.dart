@@ -2,12 +2,10 @@ import 'package:purenote/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:purenote/domain/models/note.dart';
 import 'package:purenote/ui/features/folders/views/folder_list_widget.dart';
 import 'package:purenote/ui/features/notes/views/note_card.dart';
 import 'package:purenote/ui/features/notes/view_models/note_view_model.dart';
 import 'package:purenote/ui/features/folders/view_models/folder_view_model.dart';
-import 'package:purenote/ui/features/tags/view_models/tag_view_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -151,10 +149,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     final note = notes[index];
                     final isSelected = _selectedNoteIds.contains(note.id);
                     return GestureDetector(
-                      onLongPress: () => _toggleSelectionMode(note.id!),
+                      onLongPress: () => _toggleSelectionMode(note.id),
                       onTap: () {
                         if (_isSelectionMode) {
-                          _toggleSelectionMode(note.id!);
+                          _toggleSelectionMode(note.id);
                         } else {
                           context.pushNamed(
                             'editor',

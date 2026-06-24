@@ -14,7 +14,7 @@ class SettingsViewModel extends ChangeNotifier {
 
   Future<void> _loadSettings() async {
     final result = await settingsRepository.getSettings();
-    _settings = result ?? AppSettings();
+    _settings = result;
     notifyListeners();
   }
 

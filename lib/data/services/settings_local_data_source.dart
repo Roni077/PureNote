@@ -1,6 +1,5 @@
-import 'package:isar/isar.dart';
-import 'package:purenote/data/models/settings_model.dart';
 import 'package:purenote/domain/models/settings.dart';
+import 'package:purenote/data/models/settings_model.dart';
 import 'package:purenote/data/services/isar_service.dart';
 
 class SettingsLocalDataSource {

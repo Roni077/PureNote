@@ -38,7 +38,7 @@ class FolderListWidget extends StatelessWidget {
         ),
         const Divider(),
         ListTile(
-          title: Text(AppLocalizations.of(context)!.folders, style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(AppLocalizations.of(context)!.folders, style: const TextStyle(fontWeight: FontWeight.bold)),
           trailing: IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
@@ -62,12 +62,12 @@ class FolderListWidget extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 onLongPress: () {
-                  folderViewModel.deleteFolder(folder.id!);
+                  folderViewModel.deleteFolder(folder.id);
                 },
               )),
         const Divider(),
         ListTile(
-          title: Text(AppLocalizations.of(context)!.tags, style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(AppLocalizations.of(context)!.tags, style: const TextStyle(fontWeight: FontWeight.bold)),
           trailing: IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
@@ -85,7 +85,7 @@ class FolderListWidget extends StatelessWidget {
                 leading: const Icon(Icons.local_offer, size: 16),
                 title: Text(tag.name),
                 onLongPress: () {
-                  tagViewModel.deleteTag(tag.id!);
+                  tagViewModel.deleteTag(tag.id);
                 },
               )),
         const Divider(),
