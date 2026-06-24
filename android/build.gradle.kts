@@ -27,6 +27,15 @@ subprojects {
             } catch (e: Exception) {
                 // Ignore
             }
+            try {
+                android.javaClass.getMethod("setCompileSdkVersion", Int::class.java).invoke(android, 35)
+            } catch (e: Exception) {
+                try {
+                    android.javaClass.getMethod("setCompileSdkVersion", String::class.java).invoke(android, "android-35")
+                } catch (e2: Exception) {
+                    // Ignore
+                }
+            }
         }
     }
 }
