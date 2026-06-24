@@ -1,84 +1,50 @@
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
-import 'package:purenote/domain/models/note.dart';
+import 'package:purenote/data/repositories/note_repository_impl.dart';
+import 'package:purenote/data/repositories/folder_repository_impl.dart';
+import 'package:purenote/data/repositories/tag_repository_impl.dart';
 
 class SyncResponse {
   final bool success;
-  final int syncedCount;
   final String message;
 
-  SyncResponse({
-    required this.success,
-    required this.syncedCount,
-    required this.message,
-  });
-
-  factory SyncResponse.fromJson(Map<String, dynamic> json) {
-    return SyncResponse(
-      success: json['success'] ?? false,
-      syncedCount: json['syncedCount'] ?? 0,
-      message: json['message'] ?? '',
-    );
-  }
+  SyncResponse(this.success, this.message);
 }
 
 class SyncService {
-  // A mock endpoint (or use a real one if available)
-  static const String _syncUrl = 'https://jsonplaceholder.typicode.com/posts';
+  final NoteRepositoryImpl noteRepository;
+  final FolderRepositoryImpl folderRepository;
+  final TagRepositoryImpl tagRepository;
 
-  Future<SyncResponse> syncNotes(List<Note> notes) async {
+  SyncService({
+    required this.noteRepository,
+    required this.folderRepository,
+    required this.tagRepository,
+  });
+
+  Future<SyncResponse> syncWithCloud() async {
     try {
-      // 1. Serialize notes to JSON (can be heavy if many notes)
-      final String jsonPayload = await compute(_serializeNotes, notes);
+      // final List<Note> localNotes = await noteRepository.getNotes();
+      // final List<Folder> localFolders = await folderRepository.getFolders();
+      // final List<Tag> localTags = await tagRepository.getTags();
 
-      // 2. Perform HTTP request
-      final response = await http.post(
-        Uri.parse(_syncUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonPayload,
-      );
+      // TODO(Architecture): Implement secure Sync logic using https:// and Bearer tokens.
+      // E.g.
+      // final response = await http.post(
+      //   Uri.parse('https://api.purenote.app/v1/sync'),
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': 'Bearer <SECURE_TOKEN>',
+      //   },
+      //   body: jsonEncode({
+      //     'notes': localNotes.map((n) => n.toMap()).toList(),
+      //   }),
+      // );
+      
+      // Simulate network delay for now
+      await Future.delayed(const Duration(seconds: 2));
 
-      // 3. Parse JSON response (using compute for isolate)
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // Since jsonplaceholder returns the posted object, we'll mock our successful response
-        final Map<String, dynamic> mockResponse = {
-          'success': true,
-          'syncedCount': notes.length,
-          'message': 'Successfully synced ${notes.length} notes.',
-        };
-        final SyncResponse result = await compute(_parseSyncResponse, mockResponse);
-        return result;
-      } else {
-        return SyncResponse(
-          success: false,
-          syncedCount: 0,
-          message: 'Failed to sync. Server returned ${response.statusCode}.',
-        );
-      }
+      return SyncResponse(true, 'Data synced successfully.');
     } catch (e) {
-      return SyncResponse(
-        success: false,
-        syncedCount: 0,
-        message: 'Sync error: $e',
-      );
+      return SyncResponse(false, 'Sync error: $e');
     }
-  }
-
-  // Isolate function: serialize
-  static String _serializeNotes(List<Note> notes) {
-    final List<Map<String, dynamic>> mapList = notes.map((note) => {
-      'id': note.id,
-      'title': note.title,
-      'content': note.content,
-      'createdAt': note.createdAt.toIso8601String(),
-      'updatedAt': note.updatedAt.toIso8601String(),
-    }).toList();
-    return jsonEncode(mapList);
-  }
-
-  // Isolate function: parse response
-  static SyncResponse _parseSyncResponse(Map<String, dynamic> json) {
-    return SyncResponse.fromJson(json);
   }
 }

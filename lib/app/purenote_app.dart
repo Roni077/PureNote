@@ -43,7 +43,11 @@ class PureNoteApp extends StatelessWidget {
               builder: (context, authViewModel, _) {
                 return Stack(
                   children: [
-                    if (routerChild != null) routerChild,
+                    if (routerChild != null)
+                      ExcludeSemantics(
+                        excluding: authViewModel.isLocked,
+                        child: routerChild,
+                      ),
                     if (authViewModel.isLocked) const LockScreen(),
                   ],
                 );

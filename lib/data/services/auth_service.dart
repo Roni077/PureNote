@@ -9,6 +9,7 @@ class AuthService {
   final LocalAuthentication _localAuth = LocalAuthentication();
 
   static const String _pinKey = 'app_pin_hash';
+  static const String _pinSaltKey = 'app_pin_salt';
   static const String _biometricsEnabledKey = 'app_biometrics_enabled';
 
   // --- PIN Management ---
@@ -18,30 +19,44 @@ class AuthService {
     return pin != null && pin.isNotEmpty;
   }
 
-
-  String _hashPin(String pin) {
-    final bytes = utf8.encode("${pin}purenote_salt_2026");
+  String _hashPin(String pin, String salt) {
+    final bytes = utf8.encode("$pin$salt");
     return sha256.convert(bytes).toString();
   }
 
   Future<void> setPin(String pin) async {
-    await _secureStorage.write(key: _pinKey, value: _hashPin(pin));
+    final salt = DateTime.now().millisecondsSinceEpoch.toString(); // Simple dynamic salt
+    await _secureStorage.write(key: _pinSaltKey, value: salt);
+    await _secureStorage.write(key: _pinKey, value: _hashPin(pin, salt));
   }
 
   Future<bool> verifyPin(String pin) async {
     final storedPin = await _secureStorage.read(key: _pinKey);
     if (storedPin != null && storedPin.length == 4) {
       if (storedPin == pin) {
-        await setPin(pin); // upgrade to hash
+        await setPin(pin); // upgrade to hash with secure salt
         return true;
       }
       return false;
     }
-    return storedPin == _hashPin(pin);
+    
+    final storedSalt = await _secureStorage.read(key: _pinSaltKey);
+    if (storedSalt != null) {
+      return storedPin == _hashPin(pin, storedSalt);
+    } else {
+      // Fallback to static salt in case of previous upgrade
+      final staticHash = _hashPin(pin, "purenote_salt_2026");
+      if (storedPin == staticHash) {
+        await setPin(pin); // Upgrade to dynamic salt
+        return true;
+      }
+      return false;
+    }
   }
 
   Future<void> removePin() async {
     await _secureStorage.delete(key: _pinKey);
+    await _secureStorage.delete(key: _pinSaltKey);
     await _secureStorage.delete(key: _biometricsEnabledKey);
   }
 

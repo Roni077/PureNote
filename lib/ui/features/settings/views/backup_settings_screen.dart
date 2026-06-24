@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:purenote/ui/features/settings/view_models/settings_view_model.dart';
+import 'package:purenote/ui/features/notes/view_models/note_view_model.dart';
+import 'package:purenote/ui/features/folders/view_models/folder_view_model.dart';
+import 'package:purenote/ui/features/tags/view_models/tag_view_model.dart';
 
 class BackupSettingsScreen extends StatelessWidget {
   const BackupSettingsScreen({super.key});
@@ -64,7 +67,10 @@ class BackupSettingsScreen extends StatelessWidget {
                 try {
                   await settingsViewModel.importBackup();
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Backup imported. Please restart the app.')));
+                    context.read<NoteViewModel>().reloadAll();
+                    context.read<FolderViewModel>().reloadAll();
+                    context.read<TagViewModel>().reloadAll();
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Backup imported successfully. Data reloaded.')));
                   }
                 } catch (e) {
                   if (context.mounted) {

@@ -33,7 +33,6 @@ class AppDependencyInjection extends StatelessWidget {
       providers: [
         // Services
         Provider<IsarService>(create: (_) => IsarService()),
-        Provider<SyncService>(create: (_) => SyncService()),
         Provider<AuthService>(create: (_) => AuthService()),
         Provider<NotificationService>(create: (_) => NotificationService()..initialize()),
         ProxyProvider<IsarService, BackupService>(
@@ -58,14 +57,23 @@ class AppDependencyInjection extends StatelessWidget {
         ProxyProvider<FolderLocalDataSource, FolderRepositoryImpl>(
           update: (_, ds, __) => FolderRepositoryImpl(ds),
         ),
-        ProxyProvider2<NoteLocalDataSource, SyncService, NoteRepositoryImpl>(
-          update: (_, ds, syncService, __) => NoteRepositoryImpl(ds, syncService),
+        ProxyProvider<NoteLocalDataSource, NoteRepositoryImpl>(
+          update: (_, ds, __) => NoteRepositoryImpl(ds),
         ),
         ProxyProvider<TagLocalDataSource, TagRepositoryImpl>(
           update: (_, ds, __) => TagRepositoryImpl(ds),
         ),
         ProxyProvider<SettingsLocalDataSource, SettingsRepositoryImpl>(
           update: (_, ds, __) => SettingsRepositoryImpl(ds),
+        ),
+
+        // Services that depend on repositories
+        ProxyProvider3<NoteRepositoryImpl, FolderRepositoryImpl, TagRepositoryImpl, SyncService>(
+          update: (_, nr, fr, tr, __) => SyncService(
+            noteRepository: nr,
+            folderRepository: fr,
+            tagRepository: tr,
+          ),
         ),
 
         // ViewModels
@@ -91,14 +99,16 @@ class AppDependencyInjection extends StatelessWidget {
           create: (context) => TagViewModel(repository: context.read<TagRepositoryImpl>()),
           update: (_, repo, vm) => vm ?? TagViewModel(repository: repo),
         ),
-        ChangeNotifierProxyProvider2<NoteRepositoryImpl, NotificationService, NoteViewModel>(
+        ChangeNotifierProxyProvider3<NoteRepositoryImpl, NotificationService, SyncService, NoteViewModel>(
           create: (context) => NoteViewModel(
             repository: context.read<NoteRepositoryImpl>(),
             notificationService: context.read<NotificationService>(),
+            syncService: context.read<SyncService>(),
           ),
-          update: (_, repo, notif, vm) => vm ?? NoteViewModel(
+          update: (_, repo, notif, syncS, vm) => vm ?? NoteViewModel(
             repository: repo,
             notificationService: notif,
+            syncService: syncS,
           ),
         ),
       ],

@@ -28,6 +28,10 @@ class FolderViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reloadAll() async {
+    await _loadFolders();
+  }
+
   void selectFolder(String? id) {
     _selectedFolderId = id;
     notifyListeners();

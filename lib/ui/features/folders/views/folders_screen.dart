@@ -59,6 +59,10 @@ class FoldersScreen extends StatelessWidget {
                   },
                   onLongPress: () {
                     folderViewModel.deleteFolder(folder.id);
+                    final noteVM = context.read<NoteViewModel>();
+                    if (noteVM.selectedFolderId == folder.id) {
+                      noteVM.selectFolder(null);
+                    }
                   },
                 )),
           const Divider(),

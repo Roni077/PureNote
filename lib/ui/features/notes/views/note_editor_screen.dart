@@ -37,10 +37,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
   void _loadNote() {
     if (widget.noteId != null) {
       final noteViewModel = context.read<NoteViewModel>();
-      final note = noteViewModel.notes.cast<Note?>().firstWhere(
-            (n) => n?.id.toString() == widget.noteId,
-            orElse: () => null,
-          );
+      final note = noteViewModel.notes.where((n) => n.id.toString() == widget.noteId).firstOrNull;
       if (note != null) {
         setState(() {
           _currentNote = note;
@@ -89,6 +86,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
   }
 
   Future<void> _saveNote() async {
+    if (!mounted) return;
     if (_titleController.text.isEmpty && _contentController.text.isEmpty) return;
     if (_currentNote == null) return;
 
@@ -108,9 +106,6 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
       _currentNote = updatedNote;
     } else {
       await noteViewModel.updateNote(updatedNote);
-      if (mounted) {
-        Navigator.pop(context);
-      }
       _currentNote = updatedNote;
     }
   }
@@ -179,9 +174,11 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () {
-              _saveNote();
-              context.pop();
+            onPressed: () async {
+              await _saveNote();
+              if (context.mounted) {
+                context.pop();
+              }
             },
           ),
         ],

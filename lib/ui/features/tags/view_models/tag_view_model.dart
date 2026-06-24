@@ -26,6 +26,10 @@ class TagViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reloadAll() async {
+    await _loadTags();
+  }
+
   Future<void> addTag(Tag tag) async {
     await repository.addTag(tag);
     await _loadTags();

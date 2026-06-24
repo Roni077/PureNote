@@ -24,7 +24,14 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final noteViewModel = context.watch<NoteViewModel>();
-    final notes = noteViewModel.notes; // NoteViewModel already handles filtering by search query
+    final allNotes = noteViewModel.notes; 
+
+    final query = _searchController.text.toLowerCase();
+    final notes = query.isEmpty 
+       ? [] 
+       : allNotes.where((note) =>
+          note.title.toLowerCase().contains(query) ||
+          note.content.toLowerCase().contains(query)).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -38,19 +45,21 @@ class _SearchScreenState extends State<SearchScreen> {
               icon: const Icon(Icons.clear),
               onPressed: () {
                 _searchController.clear();
-                noteViewModel.setSearchQuery('');
+                setState(() {});
               },
             ),
           ),
           onChanged: (value) {
-            noteViewModel.setSearchQuery(value);
+            setState(() {});
           },
         ),
       ),
       body: noteViewModel.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : notes.isEmpty
-              ? const Center(child: Text('No notes found for this search.'))
+          : query.isEmpty
+              ? const Center(child: Text('Type to search notes.'))
+              : notes.isEmpty
+                  ? const Center(child: Text('No notes found for this search.'))
               : GridView.builder(
                   padding: const EdgeInsets.all(8.0),
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(

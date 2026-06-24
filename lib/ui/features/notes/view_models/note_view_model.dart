@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:purenote/domain/models/note.dart';
 import 'package:purenote/data/repositories/note_repository_impl.dart';
 import 'package:purenote/data/services/notification_service.dart';
+import 'package:purenote/data/services/sync_service.dart';
 
 enum NoteSortOption { dateModifiedDesc, dateCreatedDesc, titleAsc }
 
 class NoteViewModel extends ChangeNotifier {
   final NoteRepositoryImpl repository;
   final NotificationService notificationService;
+  final SyncService syncService;
 
   List<Note> _allNotes = [];
   List<Note> _notes = [];
   List<Note> _trashedNotes = [];
   bool _isLoading = false;
   String? _selectedFolderId;
-  String _searchQuery = '';
   NoteSortOption _sortOption = NoteSortOption.dateModifiedDesc;
 
   List<Note> get notes => _notes;
@@ -25,6 +26,7 @@ class NoteViewModel extends ChangeNotifier {
   NoteViewModel({
     required this.repository,
     required this.notificationService,
+    required this.syncService,
   }) {
     repository.cleanUpTrash().then((_) {
       _loadNotes();
@@ -42,6 +44,11 @@ class NoteViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reloadAll() async {
+    await _loadNotes();
+    await loadTrashedNotes();
+  }
+
   Future<void> loadTrashedNotes() async {
     _trashedNotes = await repository.getTrashedNotes();
     notifyListeners();
@@ -52,13 +59,6 @@ class NoteViewModel extends ChangeNotifier {
 
     if (_selectedFolderId != null) {
       filtered = filtered.where((note) => note.folderId == _selectedFolderId).toList();
-    }
-
-    if (_searchQuery.isNotEmpty) {
-      final query = _searchQuery.toLowerCase();
-      filtered = filtered.where((note) =>
-          note.title.toLowerCase().contains(query) ||
-          note.content.toLowerCase().contains(query)).toList();
     }
 
     filtered.sort((a, b) {
@@ -77,12 +77,6 @@ class NoteViewModel extends ChangeNotifier {
 
   void selectFolder(String? folderId) {
     _selectedFolderId = folderId;
-    _applyFiltersAndSort();
-    notifyListeners();
-  }
-
-  void setSearchQuery(String query) {
-    _searchQuery = query;
     _applyFiltersAndSort();
     notifyListeners();
   }
@@ -128,10 +122,14 @@ class NoteViewModel extends ChangeNotifier {
   }
 
   Future<void> emptyTrash() async {
-    final trashedIds = _trashedNotes.map((n) => n.id).toList();
-    if (trashedIds.isNotEmpty) {
-      await repository.deleteMultipleNotes(trashedIds);
-      await loadTrashedNotes();
+    try {
+      final trashedIds = _trashedNotes.map((n) => n.id).toList();
+      if (trashedIds.isNotEmpty) {
+        await repository.deleteMultipleNotes(trashedIds);
+        await loadTrashedNotes();
+      }
+    } catch (e) {
+      debugPrint('Error emptying trash: $e');
     }
   }
 
@@ -139,11 +137,15 @@ class NoteViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final response = await repository.syncWithCloud();
-    onResult(response.message);
-
-    _isLoading = false;
-    notifyListeners();
+    try {
+      final response = await syncService.syncWithCloud();
+      onResult(response.message);
+    } catch (e) {
+      onResult('Sync error: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> setReminder(Note note, DateTime time) async {
