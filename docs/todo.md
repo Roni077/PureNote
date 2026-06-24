@@ -27,8 +27,8 @@ This is the detailed, step-by-step TODO list for the PureNote application, adher
 - [x] Create `NoteNotifier` and `notesProvider` (Riverpod) to manage note state.
 - [x] Build `NoteCard` widget for displaying note previews in grid/list.
 - [x] Implement `HomeScreen` with `flutter_staggered_grid_view` to display notes.
-- [ ] Add sorting capabilities to the state (by Date, Title).
-- [ ] Implement Batch Action UI (Multi-select, delete, archive).
+- [x] Add sorting capabilities to the state (by Date, Title).
+- [x] Implement Batch Action UI (Multi-select, delete, archive).
 - [x] Handle Empty States and Pull-to-Refresh UI.
 
 ## Phase 4: The Markdown Editor
@@ -62,17 +62,18 @@ This is the detailed, step-by-step TODO list for the PureNote application, adher
 - [ ] Add keyboard shortcut listener (`Ctrl+Shift+F`) to open Search globally on Desktop.
 
 ## Phase 8: Advanced Note Lifecycle & Reminders
-- [ ] Implement Trash Bin UI and logic (Restore, Permanent Delete).
-- [ ] Create `Reminder` entity and link to Notes.
-- [ ] Integrate `flutter_local_notifications` for cross-platform local alarms.
-- [ ] Build UI to set One-Time, Daily, Weekly, and Monthly reminders on notes.
+- [x] Implement Trash Bin UI and logic (Restore, Permanent Delete).
+- [x] Create `Reminder` entity and link to Notes.
+- [x] Integrate `flutter_local_notifications` for cross-platform local alarms.
+- [x] Build UI to set One-Time, Daily, Weekly, and Monthly reminders on notes.
 
-## Phase 9: Backup & Restore
-- [ ] Create Backup Service using `path_provider`.
-- [ ] Implement Isar database export to JSON format.
-- [ ] Build UI in Settings to manually export database or individual notes as JSON/TXT/Markdown.
-- [ ] Implement Import logic to deserialize JSON backups back into Isar.
-- [ ] Integrate `share_plus` for exporting files on mobile.
+### Phase 9: Backup & Restore (Completed)
+- [x] Export database (Notes, Folders, Tags) to JSON file.
+- [x] Import from JSON file (overwrite or merge).
+- [x] File picker integration.
+- [x] Manual export database or individual notes as JSON/TXT/Markdown.
+- [x] Implement Import logic to deserialize JSON backups back into Isar.
+- [x] Integrate `share_plus` for exporting files on mobile.
 
 ## Phase 10: Security & Settings
 - [ ] Setup `flutter_secure_storage` to handle App Lock keys.

@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import 'package:purenote/data/services/isar_service.dart';
 import 'package:purenote/data/services/sync_service.dart';
+import 'package:purenote/data/services/notification_service.dart';
+import 'package:purenote/data/services/backup_service.dart';
 import 'package:purenote/data/services/folder_local_data_source.dart';
 import 'package:purenote/data/services/note_local_data_source.dart';
 import 'package:purenote/data/services/tag_local_data_source.dart';
@@ -30,6 +32,10 @@ class AppDependencyInjection extends StatelessWidget {
         // Services
         Provider<IsarService>(create: (_) => IsarService()),
         Provider<SyncService>(create: (_) => SyncService()),
+        Provider<NotificationService>(create: (_) => NotificationService()..initialize()),
+        ProxyProvider<IsarService, BackupService>(
+          update: (_, isar, __) => BackupService(isar.db),
+        ),
         
         // Data Sources
         ProxyProvider<IsarService, FolderLocalDataSource>(
@@ -60,9 +66,15 @@ class AppDependencyInjection extends StatelessWidget {
         ),
 
         // ViewModels
-        ChangeNotifierProxyProvider<SettingsRepositoryImpl, SettingsViewModel>(
-          create: (context) => SettingsViewModel(settingsRepository: context.read<SettingsRepositoryImpl>()),
-          update: (_, repo, vm) => vm ?? SettingsViewModel(settingsRepository: repo),
+        ChangeNotifierProxyProvider2<SettingsRepositoryImpl, BackupService, SettingsViewModel>(
+          create: (context) => SettingsViewModel(
+            settingsRepository: context.read<SettingsRepositoryImpl>(),
+            backupService: context.read<BackupService>(),
+          ),
+          update: (_, repo, backup, vm) => vm ?? SettingsViewModel(
+            settingsRepository: repo,
+            backupService: backup,
+          ),
         ),
         ChangeNotifierProxyProvider<FolderRepositoryImpl, FolderViewModel>(
           create: (context) => FolderViewModel(repository: context.read<FolderRepositoryImpl>()),
@@ -72,9 +84,15 @@ class AppDependencyInjection extends StatelessWidget {
           create: (context) => TagViewModel(repository: context.read<TagRepositoryImpl>()),
           update: (_, repo, vm) => vm ?? TagViewModel(repository: repo),
         ),
-        ChangeNotifierProxyProvider<NoteRepositoryImpl, NoteViewModel>(
-          create: (context) => NoteViewModel(repository: context.read<NoteRepositoryImpl>()),
-          update: (_, repo, vm) => vm ?? NoteViewModel(repository: repo),
+        ChangeNotifierProxyProvider2<NoteRepositoryImpl, NotificationService, NoteViewModel>(
+          create: (context) => NoteViewModel(
+            repository: context.read<NoteRepositoryImpl>(),
+            notificationService: context.read<NotificationService>(),
+          ),
+          update: (_, repo, notif, vm) => vm ?? NoteViewModel(
+            repository: repo,
+            notificationService: notif,
+          ),
         ),
       ],
       child: child,

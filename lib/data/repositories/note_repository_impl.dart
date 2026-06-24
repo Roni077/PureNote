@@ -19,7 +19,44 @@ class NoteRepositoryImpl implements NoteRepository {
   @override
   Future<List<Note>> getNotes() async {
     final models = await _dataSource.getAllNotes();
-    return models.map((e) => e.toDomain()).toList();
+    return models.where((m) => !m.isTrashed).map((e) => e.toDomain()).toList();
+  }
+
+  @override
+  Future<List<Note>> getTrashedNotes() async {
+    final models = await _dataSource.getAllNotes();
+    return models.where((m) => m.isTrashed).map((e) => e.toDomain()).toList();
+  }
+
+  @override
+  Future<void> moveToTrash(String id) async {
+    final note = await getNoteById(id);
+    if (note != null) {
+      final trashedNote = note.copyWith(isTrashed: true, updatedAt: DateTime.now());
+      await updateNote(trashedNote);
+    }
+  }
+
+  @override
+  Future<void> restoreFromTrash(String id) async {
+    final note = await getNoteById(id);
+    if (note != null) {
+      final restoredNote = note.copyWith(isTrashed: false, updatedAt: DateTime.now());
+      await updateNote(restoredNote);
+    }
+  }
+
+  @override
+  Future<void> cleanUpTrash() async {
+    final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
+    final trashed = await getTrashedNotes();
+    final idsToDelete = trashed
+        .where((n) => n.updatedAt.isBefore(thirtyDaysAgo))
+        .map((n) => n.id)
+        .toList();
+    if (idsToDelete.isNotEmpty) {
+      await deleteMultipleNotes(idsToDelete);
+    }
   }
 
   @override

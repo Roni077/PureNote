@@ -10,6 +10,7 @@ class Note {
   final int colorIndex;
   final String? folderId;
   final List<String> tagIds;
+  final DateTime? reminderDate;
 
   Note({
     required this.id,
@@ -23,6 +24,7 @@ class Note {
     this.colorIndex = 0,
     this.folderId,
     this.tagIds = const [],
+    this.reminderDate,
   });
 
   Note copyWith({
@@ -37,6 +39,7 @@ class Note {
     int? colorIndex,
     String? folderId,
     List<String>? tagIds,
+    DateTime? reminderDate,
   }) {
     return Note(
       id: id ?? this.id,
@@ -50,6 +53,24 @@ class Note {
       colorIndex: colorIndex ?? this.colorIndex,
       folderId: folderId ?? this.folderId,
       tagIds: tagIds ?? this.tagIds,
+      reminderDate: reminderDate ?? this.reminderDate,
+    );
+  }
+
+  Note clearReminder() {
+    return Note(
+      id: id,
+      title: title,
+      content: content,
+      createdAt: createdAt,
+      updatedAt: DateTime.now(),
+      isPinned: isPinned,
+      isArchived: isArchived,
+      isTrashed: isTrashed,
+      colorIndex: colorIndex,
+      folderId: folderId,
+      tagIds: tagIds,
+      reminderDate: null,
     );
   }
 }

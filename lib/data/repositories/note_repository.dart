@@ -1,4 +1,5 @@
 import 'package:purenote/domain/models/note.dart';
+import 'package:purenote/domain/models/note.dart';
 
 abstract class NoteRepository {
   Future<List<Note>> getNotes();
@@ -8,4 +9,8 @@ abstract class NoteRepository {
   Future<void> saveNote(Note note);
   Future<void> deleteNote(String id);
   Future<void> deleteMultipleNotes(List<String> ids);
+  Future<List<Note>> getTrashedNotes();
+  Future<void> moveToTrash(String id);
+  Future<void> restoreFromTrash(String id);
+  Future<void> cleanUpTrash();
 }

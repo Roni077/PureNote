@@ -121,6 +121,52 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
       appBar: AppBar(
         actions: [
           IconButton(
+            icon: Icon(_currentNote?.reminderDate != null ? Icons.alarm_on : Icons.add_alarm),
+            tooltip: _currentNote?.reminderDate != null ? 'Clear Reminder' : 'Set Reminder',
+            onPressed: () async {
+              if (_currentNote == null) return;
+              final viewModel = context.read<NoteViewModel>();
+              
+              if (_currentNote!.reminderDate != null) {
+                await viewModel.clearReminder(_currentNote!);
+                setState(() {
+                  _currentNote = _currentNote!.clearReminder();
+                });
+                return;
+              }
+
+              final date = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime.now(),
+                lastDate: DateTime.now().add(const Duration(days: 365)),
+              );
+              if (date == null) return;
+
+              final time = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay.now(),
+              );
+              if (time == null) return;
+
+              final scheduledTime = DateTime(
+                date.year, date.month, date.day,
+                time.hour, time.minute,
+              );
+              
+              if (scheduledTime.isAfter(DateTime.now())) {
+                await viewModel.setReminder(_currentNote!, scheduledTime);
+                setState(() {
+                  _currentNote = _currentNote!.copyWith(reminderDate: scheduledTime);
+                });
+              } else {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select a future time.')));
+                }
+              }
+            },
+          ),
+          IconButton(
             icon: Icon(_isEditing ? Icons.visibility : Icons.edit),
             onPressed: () {
               setState(() {

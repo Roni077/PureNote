@@ -21,6 +21,7 @@ class NoteModel {
   int colorIndex = 0;
   String? folderId;
   List<String> tagIds = [];
+  DateTime? reminderDate;
 
   Note toDomain() {
     return Note(
@@ -35,6 +36,7 @@ class NoteModel {
       colorIndex: colorIndex,
       folderId: folderId,
       tagIds: tagIds,
+      reminderDate: reminderDate,
     );
   }
 
@@ -50,6 +52,7 @@ class NoteModel {
       ..isTrashed = note.isTrashed
       ..colorIndex = note.colorIndex
       ..folderId = note.folderId
-      ..tagIds = note.tagIds;
+      ..tagIds = note.tagIds
+      ..reminderDate = note.reminderDate;
   }
 }

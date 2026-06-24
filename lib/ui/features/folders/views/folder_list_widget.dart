@@ -88,6 +88,14 @@ class FolderListWidget extends StatelessWidget {
                   tagViewModel.deleteTag(tag.id);
                 },
               )),
+        ListTile(
+          leading: const Icon(Icons.delete),
+          title: const Text('Trash'),
+          onTap: () {
+            Navigator.pop(context);
+            context.pushNamed('trash');
+          },
+        ),
         const Divider(),
         ListTile(
           leading: const Icon(Icons.settings),

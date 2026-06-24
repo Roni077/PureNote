@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:purenote/ui/features/notes/views/home_screen.dart';
 import 'package:purenote/ui/features/notes/views/note_editor_screen.dart';
 import 'package:purenote/ui/features/settings/views/settings_screen.dart';
+import 'package:purenote/ui/features/notes/views/trash_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -24,6 +25,11 @@ final appRouter = GoRouter(
       path: '/settings',
       name: 'settings',
       builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: '/trash',
+      name: 'trash',
+      builder: (context, state) => const TrashScreen(),
     ),
   ],
 );

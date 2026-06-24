@@ -52,23 +52,28 @@ const NoteModelSchema = CollectionSchema(
       name: r'isTrashed',
       type: IsarType.bool,
     ),
-    r'tagIds': PropertySchema(
+    r'reminderDate': PropertySchema(
       id: 7,
+      name: r'reminderDate',
+      type: IsarType.dateTime,
+    ),
+    r'tagIds': PropertySchema(
+      id: 8,
       name: r'tagIds',
       type: IsarType.stringList,
     ),
     r'title': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'title',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
     r'uuid': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'uuid',
       type: IsarType.string,
     )
@@ -139,10 +144,11 @@ void _noteModelSerialize(
   writer.writeBool(offsets[4], object.isArchived);
   writer.writeBool(offsets[5], object.isPinned);
   writer.writeBool(offsets[6], object.isTrashed);
-  writer.writeStringList(offsets[7], object.tagIds);
-  writer.writeString(offsets[8], object.title);
-  writer.writeDateTime(offsets[9], object.updatedAt);
-  writer.writeString(offsets[10], object.uuid);
+  writer.writeDateTime(offsets[7], object.reminderDate);
+  writer.writeStringList(offsets[8], object.tagIds);
+  writer.writeString(offsets[9], object.title);
+  writer.writeDateTime(offsets[10], object.updatedAt);
+  writer.writeString(offsets[11], object.uuid);
 }
 
 NoteModel _noteModelDeserialize(
@@ -160,10 +166,11 @@ NoteModel _noteModelDeserialize(
   object.isArchived = reader.readBool(offsets[4]);
   object.isPinned = reader.readBool(offsets[5]);
   object.isTrashed = reader.readBool(offsets[6]);
-  object.tagIds = reader.readStringList(offsets[7]) ?? [];
-  object.title = reader.readString(offsets[8]);
-  object.updatedAt = reader.readDateTime(offsets[9]);
-  object.uuid = reader.readString(offsets[10]);
+  object.reminderDate = reader.readDateTimeOrNull(offsets[7]);
+  object.tagIds = reader.readStringList(offsets[8]) ?? [];
+  object.title = reader.readString(offsets[9]);
+  object.updatedAt = reader.readDateTime(offsets[10]);
+  object.uuid = reader.readString(offsets[11]);
   return object;
 }
 
@@ -189,12 +196,14 @@ P _noteModelDeserializeProp<P>(
     case 6:
       return (reader.readBool(offset)) as P;
     case 7:
-      return (reader.readStringList(offset) ?? []) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 8:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 9:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 10:
+      return (reader.readDateTime(offset)) as P;
+    case 11:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -862,6 +871,79 @@ extension NoteModelQueryFilter
   }
 
   QueryBuilder<NoteModel, NoteModel, QAfterFilterCondition>
+      reminderDateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'reminderDate',
+      ));
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterFilterCondition>
+      reminderDateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'reminderDate',
+      ));
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterFilterCondition> reminderDateEqualTo(
+      DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'reminderDate',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterFilterCondition>
+      reminderDateGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'reminderDate',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterFilterCondition>
+      reminderDateLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'reminderDate',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterFilterCondition> reminderDateBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'reminderDate',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterFilterCondition>
       tagIdsElementEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1489,6 +1571,18 @@ extension NoteModelQuerySortBy on QueryBuilder<NoteModel, NoteModel, QSortBy> {
     });
   }
 
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> sortByReminderDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'reminderDate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> sortByReminderDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'reminderDate', Sort.desc);
+    });
+  }
+
   QueryBuilder<NoteModel, NoteModel, QAfterSortBy> sortByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
@@ -1624,6 +1718,18 @@ extension NoteModelQuerySortThenBy
     });
   }
 
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> thenByReminderDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'reminderDate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> thenByReminderDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'reminderDate', Sort.desc);
+    });
+  }
+
   QueryBuilder<NoteModel, NoteModel, QAfterSortBy> thenByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
@@ -1707,6 +1813,12 @@ extension NoteModelQueryWhereDistinct
     });
   }
 
+  QueryBuilder<NoteModel, NoteModel, QDistinct> distinctByReminderDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'reminderDate');
+    });
+  }
+
   QueryBuilder<NoteModel, NoteModel, QDistinct> distinctByTagIds() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'tagIds');
@@ -1781,6 +1893,12 @@ extension NoteModelQueryProperty
   QueryBuilder<NoteModel, bool, QQueryOperations> isTrashedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isTrashed');
+    });
+  }
+
+  QueryBuilder<NoteModel, DateTime?, QQueryOperations> reminderDateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'reminderDate');
     });
   }
 

@@ -3,14 +3,18 @@ import 'package:mocktail/mocktail.dart';
 import 'package:purenote/domain/models/settings.dart';
 import 'package:purenote/data/repositories/settings_repository_impl.dart';
 import 'package:purenote/ui/features/settings/view_models/settings_view_model.dart';
+import 'package:purenote/data/services/backup_service.dart';
 
 class MockSettingsRepository extends Mock implements SettingsRepositoryImpl {}
+class MockBackupService extends Mock implements BackupService {}
 
 void main() {
   late MockSettingsRepository mockRepository;
+  late MockBackupService mockBackupService;
 
   setUp(() {
     mockRepository = MockSettingsRepository();
+    mockBackupService = MockBackupService();
     registerFallbackValue(AppSettings());
   });
 
@@ -19,7 +23,7 @@ void main() {
       final mockSettings = AppSettings(themeMode: ThemeModeOption.dark);
       when(() => mockRepository.getSettings()).thenAnswer((_) async => mockSettings);
 
-      final viewModel = SettingsViewModel(settingsRepository: mockRepository);
+      final viewModel = SettingsViewModel(settingsRepository: mockRepository, backupService: mockBackupService);
       await Future.delayed(Duration.zero);
 
       expect(viewModel.settings.themeMode, ThemeModeOption.dark);
@@ -30,7 +34,7 @@ void main() {
       when(() => mockRepository.getSettings()).thenAnswer((_) async => AppSettings());
       when(() => mockRepository.saveSettings(any())).thenAnswer((_) async => {});
 
-      final viewModel = SettingsViewModel(settingsRepository: mockRepository);
+      final viewModel = SettingsViewModel(settingsRepository: mockRepository, backupService: mockBackupService);
       await Future.delayed(Duration.zero);
 
       await viewModel.updateThemeMode(ThemeModeOption.light);
