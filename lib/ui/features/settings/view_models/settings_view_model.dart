@@ -3,6 +3,8 @@ import 'package:purenote/domain/models/settings.dart';
 import 'package:purenote/data/repositories/settings_repository_impl.dart';
 import 'package:purenote/data/services/backup_service.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class SettingsViewModel extends ChangeNotifier {
   final SettingsRepositoryImpl settingsRepository;
   final BackupService backupService;
@@ -19,7 +21,9 @@ class SettingsViewModel extends ChangeNotifier {
 
   Future<void> _loadSettings() async {
     final result = await settingsRepository.getSettings();
-    _settings = result;
+    final prefs = await SharedPreferences.getInstance();
+    final hasCompleted = prefs.getBool('hasCompletedOnboarding') ?? false;
+    _settings = result.copyWith(hasCompletedOnboarding: hasCompleted);
     notifyListeners();
   }
 
@@ -42,8 +46,9 @@ class SettingsViewModel extends ChangeNotifier {
   }
 
   Future<void> completeOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hasCompletedOnboarding', true);
     _settings = _settings.copyWith(hasCompletedOnboarding: true);
-    await settingsRepository.saveSettings(_settings);
     notifyListeners();
   }
 

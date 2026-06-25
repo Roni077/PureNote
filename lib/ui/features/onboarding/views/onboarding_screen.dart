@@ -42,11 +42,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _requestPermissions() async {
     // Request notifications permission
-    await Permission.notification.request();
+    final status = await Permission.notification.request();
     
-    // On newer Android versions, you might need specific storage permissions,
-    // but typically standard apps don't need it unless writing outside app dirs.
-    // We'll just request notification for reminders here.
+    if (mounted) {
+      if (status.isGranted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Notifications enabled!')),
+        );
+        _nextPage();
+      } else if (status.isPermanentlyDenied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Permission permanently denied. Please enable in settings.')),
+        );
+        openAppSettings();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Notifications not granted.')),
+        );
+      }
+    }
   }
 
   @override

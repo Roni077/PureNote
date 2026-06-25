@@ -10,7 +10,6 @@ import 'package:purenote/ui/features/settings/views/appearance_settings_screen.d
 import 'package:purenote/ui/features/settings/views/backup_settings_screen.dart';
 import 'package:purenote/ui/features/settings/views/security_settings_screen.dart';
 import 'package:purenote/ui/features/folders/views/folders_screen.dart';
-import 'package:purenote/ui/features/notes/views/search_screen.dart';
 import 'package:purenote/ui/core/widgets/main_scaffold.dart';
 
 final appRouter = GoRouter(
@@ -44,15 +43,6 @@ final appRouter = GoRouter(
               path: '/',
               name: 'home',
               builder: (context, state) => const HomeScreen(),
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: '/search',
-              name: 'search',
-              builder: (context, state) => const SearchScreen(),
             ),
           ],
         ),

@@ -17,8 +17,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
   bool _isSelectionMode = false;
   final Set<String> _selectedNoteIds = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.toLowerCase();
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -161,6 +172,29 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
       body: Column(
         children: [
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: SearchBar(
+              controller: _searchController,
+              leading: const Icon(Icons.search),
+              hintText: AppLocalizations.of(context)!.search,
+              trailing: [
+                if (_searchQuery.isNotEmpty)
+                  IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                    },
+                  ),
+              ],
+              elevation: WidgetStateProperty.all(2),
+              shape: WidgetStateProperty.all(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+            ),
+          ),
+          
           // Folder Filter Chips
           Consumer<FolderViewModel>(
             builder: (context, folderViewModel, child) {
@@ -211,7 +245,13 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: Consumer<NoteViewModel>(
               builder: (context, noteViewModel, child) {
-                final notes = noteViewModel.notes;
+                final allNotes = noteViewModel.notes;
+                final notes = _searchQuery.isEmpty 
+                    ? allNotes 
+                    : allNotes.where((note) => 
+                        note.title.toLowerCase().contains(_searchQuery) ||
+                        note.content.toLowerCase().contains(_searchQuery)).toList();
+                        
                 return noteViewModel.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : notes.isEmpty

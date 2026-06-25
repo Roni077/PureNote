@@ -58,11 +58,30 @@ class FoldersScreen extends StatelessWidget {
                     context.go('/');
                   },
                   onLongPress: () {
-                    folderViewModel.deleteFolder(folder.id);
-                    final noteVM = context.read<NoteViewModel>();
-                    if (noteVM.selectedFolderId == folder.id) {
-                      noteVM.selectFolder(null);
-                    }
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(AppLocalizations.of(context)!.deleteFolder),
+                        content: Text(AppLocalizations.of(context)!.deleteFolderConfirm),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              folderViewModel.deleteFolder(folder.id);
+                              final noteVM = context.read<NoteViewModel>();
+                              if (noteVM.selectedFolderId == folder.id) {
+                                noteVM.selectFolder(null);
+                              }
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 )),
           const Divider(),
@@ -85,7 +104,26 @@ class FoldersScreen extends StatelessWidget {
                   leading: const Icon(Icons.local_offer, size: 16),
                   title: Text(tag.name),
                   onLongPress: () {
-                    tagViewModel.deleteTag(tag.id);
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Delete Tag'),
+                        content: const Text('Are you sure you want to delete this tag?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              tagViewModel.deleteTag(tag.id);
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 )),
           const Divider(),

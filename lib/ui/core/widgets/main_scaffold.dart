@@ -9,9 +9,7 @@ class NewNoteIntent extends Intent {
   const NewNoteIntent();
 }
 
-class SearchIntent extends Intent {
-  const SearchIntent();
-}
+// Removed SearchIntent
 
 class MainScaffold extends StatelessWidget {
   const MainScaffold({
@@ -33,19 +31,12 @@ class MainScaffold extends StatelessWidget {
     return Shortcuts(
       shortcuts: {
         SingleActivator(LogicalKeyboardKey.keyN, control: !Platform.isMacOS, meta: Platform.isMacOS): const NewNoteIntent(),
-        SingleActivator(LogicalKeyboardKey.keyF, control: !Platform.isMacOS, meta: Platform.isMacOS): const SearchIntent(),
       },
       child: Actions(
         actions: {
           NewNoteIntent: CallbackAction<NewNoteIntent>(
             onInvoke: (intent) {
               context.push('/editor');
-              return null;
-            },
-          ),
-          SearchIntent: CallbackAction<SearchIntent>(
-            onInvoke: (intent) {
-              _onTap(context, 1); // Go to Search Tab
               return null;
             },
           ),
@@ -112,16 +103,10 @@ class CustomFloatingNavBar extends StatelessWidget {
                     ),
                     const SizedBox(width: 48), // Space for FAB
                     _NavBarItem(
-                      icon: Icons.search,
-                      label: AppLocalizations.of(context)!.search,
-                      isSelected: currentIndex == 1,
-                      onTap: () => onTap(1),
-                    ),
-                    _NavBarItem(
                       icon: Icons.settings,
                       label: AppLocalizations.of(context)!.settings,
-                      isSelected: currentIndex == 2,
-                      onTap: () => onTap(2),
+                      isSelected: currentIndex == 1,
+                      onTap: () => onTap(1),
                     ),
                   ],
                 ),
@@ -183,7 +168,10 @@ class _NavBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = isSelected ? theme.primaryColor : theme.iconTheme.color?.withValues(alpha: 0.5);
+    final isDark = theme.brightness == Brightness.dark;
+    final color = isSelected 
+        ? theme.primaryColor 
+        : (theme.iconTheme.color?.withValues(alpha: 0.6) ?? (isDark ? Colors.white60 : Colors.black54));
 
     return GestureDetector(
       onTap: onTap,
