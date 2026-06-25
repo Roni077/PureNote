@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:purenote/domain/models/settings.dart';
 import 'package:purenote/data/repositories/settings_repository_impl.dart';
 import 'package:purenote/ui/features/settings/view_models/settings_view_model.dart';
@@ -13,6 +14,8 @@ void main() {
   late MockBackupService mockBackupService;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     mockRepository = MockSettingsRepository();
     mockBackupService = MockBackupService();
     registerFallbackValue(AppSettings());
