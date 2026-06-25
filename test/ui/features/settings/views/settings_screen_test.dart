@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
-import 'package:purenote/domain/models/settings.dart';
 import 'package:purenote/ui/features/settings/view_models/settings_view_model.dart';
 import 'package:purenote/ui/features/settings/views/settings_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
