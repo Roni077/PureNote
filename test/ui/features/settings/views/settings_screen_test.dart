@@ -44,40 +44,15 @@ void main() {
     );
   }
 
-  testWidgets('SettingsScreen renders correctly with default settings', (WidgetTester tester) async {
-    when(() => mockViewModel.settings).thenReturn(AppSettings(
-      themeMode: ThemeModeOption.system,
-      isAutoSaveEnabled: true,
-      isMarkdownEnabled: true,
-    ));
-
+  testWidgets('SettingsScreen renders correctly with navigation tiles', (WidgetTester tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
     expect(find.text('Settings'), findsOneWidget);
-    expect(find.text('Theme Mode'), findsOneWidget);
-    expect(find.text('System'), findsOneWidget);
-    expect(find.text('Auto-Save'), findsOneWidget);
-    expect(find.text('Markdown Preview'), findsOneWidget);
+    expect(find.text('Appearance'), findsOneWidget);
+    expect(find.text('Security'), findsOneWidget);
+    expect(find.text('Data & Backup'), findsOneWidget);
     
-    // Check if Switch widgets exist
-    expect(find.byType(Switch), findsNWidgets(2));
-  });
-
-  testWidgets('SettingsScreen calls toggleAutoSave when Switch is toggled', (WidgetTester tester) async {
-    when(() => mockViewModel.settings).thenReturn(AppSettings(
-      themeMode: ThemeModeOption.system,
-      isAutoSaveEnabled: true,
-      isMarkdownEnabled: true,
-    ));
-    when(() => mockViewModel.toggleAutoSave(any())).thenAnswer((_) async => {});
-
-    await tester.pumpWidget(createWidgetUnderTest());
-
-    // Find the first switch (Auto-Save)
-    final switchFinder = find.byType(Switch).first;
-    await tester.tap(switchFinder);
-    await tester.pumpAndSettle();
-
-    verify(() => mockViewModel.toggleAutoSave(false)).called(1);
+    // Check if ListTile widgets exist
+    expect(find.byType(ListTile), findsNWidgets(3));
   });
 }
