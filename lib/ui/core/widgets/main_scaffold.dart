@@ -114,38 +114,17 @@ class CustomFloatingNavBar extends StatelessWidget {
             ),
           ),
           
-          Positioned(
-            top: -20,
-            child: GestureDetector(
-              onTap: () {
-                context.push('/editor');
-              },
-              child: Container(
-                height: 64,
-                width: 64,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF6B8EFF), Color(0xFFFF6BEE)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF6B8EFF).withValues(alpha: 0.4),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 32,
-                ),
+            Positioned(
+              top: -20,
+              child: FloatingActionButton(
+                onPressed: () => context.push('/editor'),
+                elevation: 4,
+                backgroundColor: isDark ? Colors.blueGrey[800] : theme.colorScheme.primary,
+                foregroundColor: isDark ? Colors.white : theme.colorScheme.onPrimary,
+                shape: const CircleBorder(),
+                child: const Icon(Icons.add, size: 32),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -171,7 +150,7 @@ class _NavBarItem extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final color = isSelected 
         ? theme.primaryColor 
-        : (theme.iconTheme.color?.withValues(alpha: 0.6) ?? (isDark ? Colors.white60 : Colors.black54));
+        : (isDark ? Colors.white70 : Colors.black54);
 
     return GestureDetector(
       onTap: onTap,

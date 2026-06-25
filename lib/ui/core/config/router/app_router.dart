@@ -1,9 +1,7 @@
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:purenote/ui/features/notes/views/home_screen.dart';
 import 'package:purenote/ui/features/notes/views/note_editor_screen.dart';
 import 'package:purenote/ui/features/settings/views/settings_screen.dart';
-import 'package:purenote/ui/features/settings/view_models/settings_view_model.dart';
 import 'package:purenote/ui/features/notes/views/trash_screen.dart';
 import 'package:purenote/ui/features/onboarding/views/onboarding_screen.dart';
 import 'package:purenote/ui/features/settings/views/appearance_settings_screen.dart';
@@ -12,16 +10,15 @@ import 'package:purenote/ui/features/settings/views/security_settings_screen.dar
 import 'package:purenote/ui/features/folders/views/folders_screen.dart';
 import 'package:purenote/ui/core/widgets/main_scaffold.dart';
 
+bool isFirstLaunch = true;
+
 final appRouter = GoRouter(
   initialLocation: '/',
   redirect: (context, state) {
-    final settingsViewModel = context.read<SettingsViewModel>();
-    final hasCompleted = settingsViewModel.settings.hasCompletedOnboarding;
-    
-    if (!hasCompleted && state.matchedLocation != '/onboarding') {
+    if (isFirstLaunch && state.matchedLocation != '/onboarding') {
       return '/onboarding';
     }
-    if (hasCompleted && state.matchedLocation == '/onboarding') {
+    if (!isFirstLaunch && state.matchedLocation == '/onboarding') {
       return '/';
     }
     return null;

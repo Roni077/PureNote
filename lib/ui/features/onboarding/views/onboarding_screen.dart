@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:purenote/ui/features/settings/view_models/settings_view_model.dart';
+import 'package:purenote/ui/core/config/router/app_router.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -35,6 +36,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _finishOnboarding() async {
     final settingsViewModel = context.read<SettingsViewModel>();
     await settingsViewModel.completeOnboarding();
+    isFirstLaunch = false;
     if (mounted) {
       context.go('/');
     }
