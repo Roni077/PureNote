@@ -93,20 +93,27 @@ class CustomFloatingNavBar extends StatelessWidget {
                   ],
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _NavBarItem(
-                      icon: Icons.edit_document,
-                      label: AppLocalizations.of(context)!.allNotes,
-                      isSelected: currentIndex == 0,
-                      onTap: () => onTap(0),
+                    Expanded(
+                      child: Center(
+                        child: _NavBarItem(
+                          icon: Icons.edit_document,
+                          label: AppLocalizations.of(context)!.allNotes,
+                          isSelected: currentIndex == 0,
+                          onTap: () => onTap(0),
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: 48), // Space for FAB
-                    _NavBarItem(
-                      icon: Icons.settings,
-                      label: AppLocalizations.of(context)!.settings,
-                      isSelected: currentIndex == 1,
-                      onTap: () => onTap(1),
+                    const SizedBox(width: 72), // Fixed space exactly in the middle for FAB
+                    Expanded(
+                      child: Center(
+                        child: _NavBarItem(
+                          icon: Icons.settings,
+                          label: AppLocalizations.of(context)!.settings,
+                          isSelected: currentIndex == 1,
+                          onTap: () => onTap(1),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -149,7 +156,7 @@ class _NavBarItem extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final color = isSelected 
-        ? theme.primaryColor 
+        ? theme.colorScheme.primary 
         : (isDark ? Colors.white70 : Colors.black54);
 
     return GestureDetector(
@@ -160,7 +167,7 @@ class _NavBarItem extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? theme.primaryColor.withValues(alpha: 0.15) : Colors.transparent,
+          color: isSelected ? theme.colorScheme.primary.withValues(alpha: 0.15) : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
