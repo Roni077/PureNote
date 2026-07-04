@@ -16,7 +16,7 @@ plugins {
 
 android {
     namespace = "com.purenote.android"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
