@@ -7,6 +7,8 @@ class Note {
   final bool isPinned;
   final bool isArchived;
   final bool isTrashed;
+  final bool isFavorite;
+  final bool isLocked;
   final int colorIndex;
   final String? folderId;
   final List<String> tagIds;
@@ -21,6 +23,8 @@ class Note {
     this.isPinned = false,
     this.isArchived = false,
     this.isTrashed = false,
+    this.isFavorite = false,
+    this.isLocked = false,
     this.colorIndex = 0,
     this.folderId,
     this.tagIds = const [],
@@ -36,6 +40,8 @@ class Note {
     bool? isPinned,
     bool? isArchived,
     bool? isTrashed,
+    bool? isFavorite,
+    bool? isLocked,
     int? colorIndex,
     String? folderId,
     List<String>? tagIds,
@@ -50,6 +56,8 @@ class Note {
       isPinned: isPinned ?? this.isPinned,
       isArchived: isArchived ?? this.isArchived,
       isTrashed: isTrashed ?? this.isTrashed,
+      isFavorite: isFavorite ?? this.isFavorite,
+      isLocked: isLocked ?? this.isLocked,
       colorIndex: colorIndex ?? this.colorIndex,
       folderId: folderId ?? this.folderId,
       tagIds: tagIds ?? this.tagIds,
@@ -67,6 +75,8 @@ class Note {
       isPinned: isPinned,
       isArchived: isArchived,
       isTrashed: isTrashed,
+      isFavorite: isFavorite,
+      isLocked: isLocked,
       colorIndex: colorIndex,
       folderId: folderId,
       tagIds: tagIds,

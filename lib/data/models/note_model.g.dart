@@ -42,38 +42,48 @@ const NoteModelSchema = CollectionSchema(
       name: r'isArchived',
       type: IsarType.bool,
     ),
-    r'isPinned': PropertySchema(
+    r'isFavorite': PropertySchema(
       id: 5,
+      name: r'isFavorite',
+      type: IsarType.bool,
+    ),
+    r'isLocked': PropertySchema(
+      id: 6,
+      name: r'isLocked',
+      type: IsarType.bool,
+    ),
+    r'isPinned': PropertySchema(
+      id: 7,
       name: r'isPinned',
       type: IsarType.bool,
     ),
     r'isTrashed': PropertySchema(
-      id: 6,
+      id: 8,
       name: r'isTrashed',
       type: IsarType.bool,
     ),
     r'reminderDate': PropertySchema(
-      id: 7,
+      id: 9,
       name: r'reminderDate',
       type: IsarType.dateTime,
     ),
     r'tagIds': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'tagIds',
       type: IsarType.stringList,
     ),
     r'title': PropertySchema(
-      id: 9,
+      id: 11,
       name: r'title',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 10,
+      id: 12,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
     r'uuid': PropertySchema(
-      id: 11,
+      id: 13,
       name: r'uuid',
       type: IsarType.string,
     )
@@ -142,13 +152,15 @@ void _noteModelSerialize(
   writer.writeDateTime(offsets[2], object.createdAt);
   writer.writeString(offsets[3], object.folderId);
   writer.writeBool(offsets[4], object.isArchived);
-  writer.writeBool(offsets[5], object.isPinned);
-  writer.writeBool(offsets[6], object.isTrashed);
-  writer.writeDateTime(offsets[7], object.reminderDate);
-  writer.writeStringList(offsets[8], object.tagIds);
-  writer.writeString(offsets[9], object.title);
-  writer.writeDateTime(offsets[10], object.updatedAt);
-  writer.writeString(offsets[11], object.uuid);
+  writer.writeBool(offsets[5], object.isFavorite);
+  writer.writeBool(offsets[6], object.isLocked);
+  writer.writeBool(offsets[7], object.isPinned);
+  writer.writeBool(offsets[8], object.isTrashed);
+  writer.writeDateTime(offsets[9], object.reminderDate);
+  writer.writeStringList(offsets[10], object.tagIds);
+  writer.writeString(offsets[11], object.title);
+  writer.writeDateTime(offsets[12], object.updatedAt);
+  writer.writeString(offsets[13], object.uuid);
 }
 
 NoteModel _noteModelDeserialize(
@@ -164,13 +176,15 @@ NoteModel _noteModelDeserialize(
   object.folderId = reader.readStringOrNull(offsets[3]);
   object.id = id;
   object.isArchived = reader.readBool(offsets[4]);
-  object.isPinned = reader.readBool(offsets[5]);
-  object.isTrashed = reader.readBool(offsets[6]);
-  object.reminderDate = reader.readDateTimeOrNull(offsets[7]);
-  object.tagIds = reader.readStringList(offsets[8]) ?? [];
-  object.title = reader.readString(offsets[9]);
-  object.updatedAt = reader.readDateTime(offsets[10]);
-  object.uuid = reader.readString(offsets[11]);
+  object.isFavorite = reader.readBool(offsets[5]);
+  object.isLocked = reader.readBool(offsets[6]);
+  object.isPinned = reader.readBool(offsets[7]);
+  object.isTrashed = reader.readBool(offsets[8]);
+  object.reminderDate = reader.readDateTimeOrNull(offsets[9]);
+  object.tagIds = reader.readStringList(offsets[10]) ?? [];
+  object.title = reader.readString(offsets[11]);
+  object.updatedAt = reader.readDateTime(offsets[12]);
+  object.uuid = reader.readString(offsets[13]);
   return object;
 }
 
@@ -196,14 +210,18 @@ P _noteModelDeserializeProp<P>(
     case 6:
       return (reader.readBool(offset)) as P;
     case 7:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 8:
-      return (reader.readStringList(offset) ?? []) as P;
+      return (reader.readBool(offset)) as P;
     case 9:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 10:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 11:
+      return (reader.readString(offset)) as P;
+    case 12:
+      return (reader.readDateTime(offset)) as P;
+    case 13:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -845,6 +863,26 @@ extension NoteModelQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isArchived',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterFilterCondition> isFavoriteEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isFavorite',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterFilterCondition> isLockedEqualTo(
+      bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isLocked',
         value: value,
       ));
     });
@@ -1547,6 +1585,30 @@ extension NoteModelQuerySortBy on QueryBuilder<NoteModel, NoteModel, QSortBy> {
     });
   }
 
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> sortByIsFavorite() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFavorite', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> sortByIsFavoriteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFavorite', Sort.desc);
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> sortByIsLocked() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLocked', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> sortByIsLockedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLocked', Sort.desc);
+    });
+  }
+
   QueryBuilder<NoteModel, NoteModel, QAfterSortBy> sortByIsPinned() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isPinned', Sort.asc);
@@ -1694,6 +1756,30 @@ extension NoteModelQuerySortThenBy
     });
   }
 
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> thenByIsFavorite() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFavorite', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> thenByIsFavoriteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isFavorite', Sort.desc);
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> thenByIsLocked() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLocked', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QAfterSortBy> thenByIsLockedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isLocked', Sort.desc);
+    });
+  }
+
   QueryBuilder<NoteModel, NoteModel, QAfterSortBy> thenByIsPinned() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isPinned', Sort.asc);
@@ -1801,6 +1887,18 @@ extension NoteModelQueryWhereDistinct
     });
   }
 
+  QueryBuilder<NoteModel, NoteModel, QDistinct> distinctByIsFavorite() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isFavorite');
+    });
+  }
+
+  QueryBuilder<NoteModel, NoteModel, QDistinct> distinctByIsLocked() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isLocked');
+    });
+  }
+
   QueryBuilder<NoteModel, NoteModel, QDistinct> distinctByIsPinned() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isPinned');
@@ -1881,6 +1979,18 @@ extension NoteModelQueryProperty
   QueryBuilder<NoteModel, bool, QQueryOperations> isArchivedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isArchived');
+    });
+  }
+
+  QueryBuilder<NoteModel, bool, QQueryOperations> isFavoriteProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isFavorite');
+    });
+  }
+
+  QueryBuilder<NoteModel, bool, QQueryOperations> isLockedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isLocked');
     });
   }
 

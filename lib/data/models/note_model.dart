@@ -18,6 +18,8 @@ class NoteModel {
   bool isPinned = false;
   bool isArchived = false;
   bool isTrashed = false;
+  bool isFavorite = false;
+  bool isLocked = false;
   int colorIndex = 0;
   String? folderId;
   List<String> tagIds = [];
@@ -33,6 +35,8 @@ class NoteModel {
       isPinned: isPinned,
       isArchived: isArchived,
       isTrashed: isTrashed,
+      isFavorite: isFavorite,
+      isLocked: isLocked,
       colorIndex: colorIndex,
       folderId: folderId,
       tagIds: tagIds,
@@ -50,6 +54,8 @@ class NoteModel {
       ..isPinned = note.isPinned
       ..isArchived = note.isArchived
       ..isTrashed = note.isTrashed
+      ..isFavorite = note.isFavorite
+      ..isLocked = note.isLocked
       ..colorIndex = note.colorIndex
       ..folderId = note.folderId
       ..tagIds = note.tagIds

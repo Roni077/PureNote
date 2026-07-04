@@ -159,4 +159,20 @@ class NoteViewModel extends ChangeNotifier {
     await updateNote(updated);
     await notificationService.cancelReminder(note.id);
   }
+
+  Future<void> toggleFavorite(Note note) async {
+    final updated = note.copyWith(
+      isFavorite: !note.isFavorite,
+      updatedAt: DateTime.now(),
+    );
+    await updateNote(updated);
+  }
+
+  Future<void> toggleLock(Note note) async {
+    final updated = note.copyWith(
+      isLocked: !note.isLocked,
+      updatedAt: DateTime.now(),
+    );
+    await updateNote(updated);
+  }
 }

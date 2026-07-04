@@ -93,3 +93,17 @@ This is the detailed, step-by-step TODO list for the PureNote application, adher
 - [ ] Add permission request step in onboarding (Notifications, Storage).
 - [ ] Save onboarding completion state in `shared_preferences` or `SettingsViewModel`.
 - [ ] Update router to show `OnboardingScreen` on first launch instead of `HomeScreen`.
+
+## Phase 13: Release Preparation & Theming Polish
+- [x] Implement Note Preview Screen (Hero animations, syntax highlighting, metadata).
+- [ ] Generate and apply custom App Icons.
+- [ ] Generate and apply custom Launch Screens.
+- [ ] Setup Android Keystore and code signing for release (arm64-v8a).
+
+## Phase 14: Rich Text Editor & Formatting Toolbar
+- [x] Install `flutter_quill` and `flex_color_picker`.
+- [x] Create `FormattingState` provider for toolbar logic.
+- [x] Build custom Material 3 `FormattingToolbar` and buttons.
+- [x] Update `NoteEditorScreen` to use `QuillEditor` and `QuillController`.
+- [x] Update `NotePreviewScreen` to render Delta JSON.
+- [x] Add legacy Markdown fallback migration logic.

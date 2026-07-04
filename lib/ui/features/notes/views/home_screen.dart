@@ -108,9 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final folderViewModel = context.watch<FolderViewModel>();
-    final selectedFolderId = folderViewModel.selectedFolderId;
-
     return Scaffold(
       appBar: _isSelectionMode
           ? AppBar(
@@ -278,10 +275,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     _toggleSelectionMode(note.id);
                                   } else {
                                     context.pushNamed(
-                                      'editor',
+                                      'preview',
                                       queryParameters: {
                                         'id': note.id.toString(),
-                                        'folderId': selectedFolderId?.toString() ?? '',
                                       },
                                     );
                                   }

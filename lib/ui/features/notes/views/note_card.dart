@@ -16,13 +16,19 @@ class NoteCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              note.title.isEmpty ? AppLocalizations.of(context)!.untitled : note.title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            Hero(
+              tag: 'note_title_${note.id}',
+              child: Material(
+                color: Colors.transparent,
+                child: Text(
+                  note.title.isEmpty ? AppLocalizations.of(context)!.untitled : note.title,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
             const SizedBox(height: 8),
             Expanded(

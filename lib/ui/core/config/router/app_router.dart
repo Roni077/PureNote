@@ -3,6 +3,7 @@ import 'package:purenote/ui/features/notes/views/home_screen.dart';
 import 'package:purenote/ui/features/notes/views/note_editor_screen.dart';
 import 'package:purenote/ui/features/settings/views/settings_screen.dart';
 import 'package:purenote/ui/features/notes/views/trash_screen.dart';
+import 'package:purenote/ui/features/notes/views/note_preview_screen.dart';
 import 'package:purenote/ui/features/onboarding/views/onboarding_screen.dart';
 import 'package:purenote/ui/features/settings/views/appearance_settings_screen.dart';
 import 'package:purenote/ui/features/settings/views/backup_settings_screen.dart';
@@ -70,6 +71,14 @@ final appRouter = GoRouter(
           ],
         ),
       ],
+    ),
+    GoRoute(
+      path: '/preview',
+      name: 'preview',
+      builder: (context, state) {
+        final noteId = state.uri.queryParameters['id'] ?? '';
+        return NotePreviewScreen(noteId: noteId);
+      },
     ),
     GoRoute(
       path: '/editor',
